@@ -1,0 +1,127 @@
+/* ══ MyTasks — Full-width redesign ══ */
+
+.my-tasks {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.my-tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--rim);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.my-tasks-header h1 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  letter-spacing: -0.03em;
+  font-family: var(--font-display);
+}
+.my-tasks-sub { color: var(--fg-3); font-size: 0.82rem; margin-top: 0.25rem; font-family: var(--font-mono); }
+
+/* ── Filter pills ── */
+.filter-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.filter-pill {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--surface);
+  border: 1px solid var(--rim);
+  color: var(--fg-2);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--r-md);
+  font-size: 0.78rem; font-weight: 500;
+  transition: all var(--t);
+  font-family: var(--font-ui);
+}
+.filter-pill:hover { border-color: var(--rim-bright); color: var(--fg); background: var(--surface-2); }
+.filter-pill.active {
+  background: rgba(56,189,248,0.1);
+  border-color: var(--cyan-border);
+  color: var(--cyan);
+}
+.pill-count {
+  background: rgba(56,189,248,0.12);
+  font-size: 0.62rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px; min-width: 18px;
+  text-align: center; font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--cyan);
+}
+.filter-pill:not(.active) .pill-count {
+  background: var(--surface-2);
+  color: var(--fg-3);
+}
+
+/* ── Loading / Empty ── */
+.my-tasks-loading,
+.my-tasks-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 280px; gap: 0.6rem;
+  border: 1px dashed var(--rim); border-radius: var(--r-lg); background: var(--surface);
+}
+.my-tasks-loading .spinner { width: 24px; height: 24px; border-width: 2px; }
+.my-tasks-empty p { font-size: 1rem; font-weight: 600; color: var(--fg); font-family: var(--font-display); }
+.my-tasks-empty span { color: var(--fg-3); font-size: 0.82rem; }
+
+/* ── Task list ── */
+.tasks-list {
+  background: var(--surface);
+  border: 1px solid var(--rim);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.task-row {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--rim);
+  transition: background var(--t);
+}
+.task-row:last-child { border-bottom: none; }
+.task-row:hover { background: var(--surface-2); }
+.task-row--overdue { border-left: 3px solid var(--rose); }
+
+.task-row__left { flex: 1; min-width: 0; }
+
+.task-row__project {
+  font-size: 0.62rem; color: var(--fg-3);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  font-weight: 600; display: block; margin-bottom: 0.2rem;
+  font-family: var(--font-mono);
+}
+.task-row__title { font-size: 0.875rem; font-weight: 600; color: var(--fg); margin-bottom: 0.15rem; }
+.task-row__desc {
+  font-size: 0.78rem; color: var(--fg-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 500px; margin-bottom: 0.4rem;
+}
+.task-row__meta { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.task-row__due { font-size: 0.7rem; color: var(--fg-3); font-family: var(--font-mono); }
+.overdue-text  { color: var(--rose); font-weight: 600; }
+
+/* ── Status select ── */
+.status-select {
+  background: var(--surface-2);
+  border: 1px solid var(--rim);
+  border-radius: var(--r-md);
+  color: var(--fg);
+  padding: 0.38rem 1.8rem 0.38rem 0.7rem;
+  font-family: var(--font-ui);
+  font-size: 0.78rem; font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--t);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%233d5470' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  min-width: 120px;
+}
+.status-select:focus { border-color: var(--cyan); outline: none; }
+.status-todo       { color: var(--fg-2); }
+.status-inprogress { color: var(--amber); border-color: rgba(251,191,36,0.25); }
+.status-done       { color: var(--emerald); border-color: rgba(52,211,153,0.25); }
