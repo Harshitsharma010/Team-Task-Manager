@@ -288,6 +288,12 @@ http://localhost:5173
 | --- | --- | --- |
 | `VITE_API_URL` | Optional | API base URL. Defaults to `/api` |
 
+Example `frontend/.env` for local development:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
 ## Project Structure
 
 ```text
@@ -365,6 +371,33 @@ NODE_ENV=production
    - Start the Express server in production mode.
 
 In production mode, Express serves the built frontend from `frontend/dist`.
+
+### Railway environment checklist
+
+If Railway shows one deployment succeeding and another deployment failing for the same commit, check whether you have multiple Railway services connected to the same GitHub repository. Each service needs its own environment variables.
+
+Required variables for the full-stack service:
+
+```env
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_secret
+NODE_ENV=production
+```
+
+Optional variable:
+
+```env
+CLIENT_URL=https://your-frontend-or-railway-domain
+```
+
+Common failure causes:
+
+- `MONGO_URI` is missing or invalid.
+- `JWT_SECRET` is missing.
+- A duplicate Railway service is still connected to the repository but does not have the required variables.
+- The service is deploying the wrong root directory or using stale settings.
+
+If one Railway service is already working, keep that as the active deployment and disconnect or delete the duplicate failing service to avoid noisy failed deployment history.
 
 ## Limitations
 
