@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://team-task-manager-production-815a.up.railway.app/login">Live Demo</a>
+  <a href="https://team-task-manager-production-815a.up.railway.app/">Live Demo</a>
   ·
   <a href="#screenshots">Screenshots</a>
   ·
