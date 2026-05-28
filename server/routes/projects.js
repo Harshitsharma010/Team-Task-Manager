@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const auth   = require("../middleware/auth");
-const { Project, User, Task } = require("../initDB");
+const { Project, User, Task, Comment } = require("../initDB");
 
 // ─── Helpers ──────────────────────────────────────────────────
 const isProjectAdmin = (project, userId) =>
@@ -117,6 +117,7 @@ router.delete("/:id", auth, async (req, res) => {
     if (!isProjectAdmin(project, req.user._id))
       return res.status(403).json({ message: "Only admins can delete projects" });
 
+    await Comment.deleteMany({ project: project._id });
     await Task.deleteMany({ project: project._id });
     await Project.findByIdAndDelete(project._id);
 
@@ -230,6 +231,15 @@ router.get("/:id/tasks", auth, async (req, res) => {
       .populate("created_by", "name")
       .lean();
 
+    const commentCounts = await Comment.aggregate([
+      { $match: { task: { $in: tasks.map((task) => task._id) } } },
+      { $group: { _id: "$task", count: { $sum: 1 } } },
+    ]);
+    const commentCountMap = commentCounts.reduce((acc, item) => {
+      acc[item._id.toString()] = item.count;
+      return acc;
+    }, {});
+
     const result = tasks.map((t) => ({
       id:             t._id.toString(),
       title:          t.title,
@@ -241,6 +251,8 @@ router.get("/:id/tasks", auth, async (req, res) => {
       assigned_name:  t.assigned_to?.name || null,
       assigned_color: t.assigned_to?.avatar_color || null,
       created_by:     t.created_by?._id?.toString() || null,
+      comment_count:  commentCountMap[t._id.toString()] || 0,
+      updated_at:     t.updatedAt,
     }));
 
     res.json(result);
@@ -287,6 +299,8 @@ router.post("/:id/tasks", auth, async (req, res) => {
       assigned_to:    populated.assigned_to?._id?.toString() || null,
       assigned_name:  populated.assigned_to?.name || null,
       assigned_color: populated.assigned_to?.avatar_color || null,
+      comment_count:  0,
+      updated_at:     populated.updatedAt,
     });
   } catch (err) {
     console.error("Create task error:", err);

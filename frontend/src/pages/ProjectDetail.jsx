@@ -1,288 +1,311 @@
-import React, { Component } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import TaskModal from "../components/TaskModal";
 import "./ProjectDetail.css";
 
 const COLUMNS = [
-  { key: "todo",       label: "To Do",      dot: "dot-todo" },
-  { key: "inprogress", label: "In Progress", dot: "dot-progress" },
-  { key: "done",       label: "Done",        dot: "dot-done" },
+  { key: "todo", label: "To Do", tone: "blue" },
+  { key: "inprogress", label: "In Progress", tone: "blue" },
+  { key: "review", label: "Review", tone: "amber" },
+  { key: "done", label: "Done", tone: "green" },
 ];
 
-function TaskCard({ task, isAdmin, onEdit, onDelete }) {
-  const overdue = task.due_date && task.status !== "done" && new Date(task.due_date) < new Date();
+function isOverdue(task) {
+  return task.due_date && task.status !== "done" && new Date(task.due_date) < new Date();
+}
+
+function formatDate(value) {
+  if (!value) return "";
+  return new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function TaskCard({ task, isAdmin, onEdit, onDelete, onDragStart }) {
   return (
-    <div className="task-card" onClick={() => onEdit(task)}>
-      <div className="task-card__top">
+    <article
+      className={`board-task ${isOverdue(task) ? "board-task--overdue" : ""}`}
+      draggable
+      onDragStart={(event) => {
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", task.id);
+        onDragStart(task.id);
+      }}
+      onClick={() => onEdit(task)}
+    >
+      <div className="board-task__top">
         <span className={`priority-badge priority-${task.priority}`}>{task.priority}</span>
         {isAdmin && (
-          <button className="task-card__del"
-            onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}>✕</button>
+          <button className="task-delete" onClick={(event) => { event.stopPropagation(); onDelete(task.id); }} aria-label="Delete task">
+            ×
+          </button>
         )}
       </div>
-      <p className="task-card__title">{task.title}</p>
-      {task.description && <p className="task-card__desc">{task.description}</p>}
-      <div className="task-card__footer">
-        {task.assigned_name && (
-          <span className="task-card__avatar"
-            style={{ background: task.assigned_color || "#38bdf8" }}
-            title={task.assigned_name}>
-            {task.assigned_name[0].toUpperCase()}
+      <h3>{task.title}</h3>
+      {task.description && <p>{task.description}</p>}
+      <div className="board-task__meta">
+        {task.assigned_name ? (
+          <span className="avatar" style={{ background: task.assigned_color || "#67d8ff" }} title={task.assigned_name}>
+            {task.assigned_name[0]}
           </span>
-        )}
-        {task.due_date && (
-          <span className={`task-card__due ${overdue ? "task-card__due--overdue" : ""}`}>
-            {overdue ? "⚑ " : ""}
-            {new Date(task.due_date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
-          </span>
-        )}
+        ) : <span className="status-pill">Unassigned</span>}
+        <span className={isOverdue(task) ? "status-pill rose" : "muted"}>
+          {isOverdue(task) ? "Overdue" : formatDate(task.due_date) || "No date"}
+        </span>
+        {task.comment_count > 0 && <span className="chip">{task.comment_count} notes</span>}
       </div>
-    </div>
+    </article>
   );
 }
 
-class AddMemberForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { email: "", loading: false, error: "" };
-    this.handleAdd = this.handleAdd.bind(this);
-  }
+function AddMemberForm({ projectId, onAdded }) {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  async handleAdd(e) {
-    e.preventDefault();
-    this.setState({ error: "", loading: true });
+  const handleAdd = async (event) => {
+    event.preventDefault();
+    setError("");
+    setLoading(true);
     try {
-      await api.post(`/projects/${this.props.projectId}/members`, { email: this.state.email });
-      this.setState({ email: "" });
-      this.props.onAdded();
+      await api.post(`/projects/${projectId}/members`, { email });
+      setEmail("");
+      onAdded();
     } catch (err) {
-      this.setState({ error: err.response?.data?.message || "User not found." });
+      setError(err.response?.data?.message || "User not found.");
     } finally {
-      this.setState({ loading: false });
+      setLoading(false);
     }
-  }
+  };
 
-  render() {
-    const { email, loading, error } = this.state;
-    return (
-      <div className="add-member-form">
-        <h4>Add a team member</h4>
-        {error && <div className="alert-error" style={{ marginBottom: "0.75rem" }}>{error}</div>}
-        <form onSubmit={this.handleAdd}>
-          <div className="add-member-row">
-            <input
-              type="email" placeholder="colleague@company.com" value={email}
-              onChange={(e) => this.setState({ email: e.target.value })} required
-            />
-            <button type="submit" className="btn-accent" disabled={loading}>
-              {loading ? <span className="spinner" /> : "Add"}
-            </button>
-          </div>
-        </form>
+  return (
+    <form className="member-add" onSubmit={handleAdd}>
+      <div>
+        <span className="eyebrow">Invite member</span>
+        <h3>Add a teammate</h3>
       </div>
-    );
-  }
+      {error && <div className="alert-error">{error}</div>}
+      <div className="member-add__row">
+        <input className="input" type="email" placeholder="colleague@company.com" value={email} onChange={(event) => setEmail(event.target.value)} required />
+        <button className="btn-primary" type="submit" disabled={loading}>{loading ? <span className="spinner" /> : "Add"}</button>
+      </div>
+    </form>
+  );
 }
 
-function ProjectDetail(props) {
-  const { id }   = useParams();
-  const { user } = useAuth();
+export default function ProjectDetail() {
+  const { id } = useParams();
   const navigate = useNavigate();
-  return <ProjectDetailClass id={id} user={user} navigate={navigate} {...props} />;
-}
+  const { user } = useAuth();
+  const [project, setProject] = useState(null);
+  const [tasks, setTasks] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState("board");
+  const [query, setQuery] = useState("");
+  const [modalTask, setModalTask] = useState(null);
+  const [dragging, setDragging] = useState(null);
+  const [error, setError] = useState("");
 
-class ProjectDetailClass extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      project: null, tasks: [], members: [],
-      loading: true, modalTask: null, tab: "board",
-    };
-    this.load               = this.load.bind(this);
-    this.handleDeleteTask   = this.handleDeleteTask.bind(this);
-    this.handleRemoveMember = this.handleRemoveMember.bind(this);
-  }
-
-  componentDidMount() { this.load(); }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.id !== this.props.id) this.load();
-  }
-
-  async load() {
+  const load = async () => {
+    setLoading(true);
+    setError("");
     try {
-      const [pRes, tRes, mRes] = await Promise.all([
-        api.get(`/projects/${this.props.id}`),
-        api.get(`/projects/${this.props.id}/tasks`),
-        api.get(`/projects/${this.props.id}/members`),
+      const [projectRes, taskRes, memberRes] = await Promise.all([
+        api.get(`/projects/${id}`),
+        api.get(`/projects/${id}/tasks`),
+        api.get(`/projects/${id}/members`),
       ]);
-      this.setState({ project: pRes.data, tasks: tRes.data, members: mRes.data });
+      setProject(projectRes.data);
+      setTasks(taskRes.data);
+      setMembers(memberRes.data);
     } catch (err) {
-      if (err.response?.status === 404) this.props.navigate("/projects");
+      if (err.response?.status === 404) navigate("/projects");
+      else setError("Failed to load project workspace.");
     } finally {
-      this.setState({ loading: false });
+      setLoading(false);
     }
-  }
+  };
 
-  async handleDeleteTask(taskId) {
+  useEffect(() => {
+    let alive = true;
+    Promise.all([
+      api.get(`/projects/${id}`),
+      api.get(`/projects/${id}/tasks`),
+      api.get(`/projects/${id}/members`),
+    ])
+      .then(([projectRes, taskRes, memberRes]) => {
+        if (!alive) return;
+        setProject(projectRes.data);
+        setTasks(taskRes.data);
+        setMembers(memberRes.data);
+      })
+      .catch((err) => {
+        if (!alive) return;
+        if (err.response?.status === 404) navigate("/projects");
+        else setError("Failed to load project workspace.");
+      })
+      .finally(() => alive && setLoading(false));
+    return () => { alive = false; };
+  }, [id, navigate]);
+
+  const isAdmin = useMemo(() => members.some((member) => (
+    member.user_id?.toString() === user?.id?.toString() && member.role === "admin"
+  )), [members, user?.id]);
+
+  const filteredTasks = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return tasks;
+    return tasks.filter((task) => [
+      task.title,
+      task.description,
+      task.assigned_name,
+      task.priority,
+      task.status,
+    ].filter(Boolean).some((value) => value.toLowerCase().includes(q)));
+  }, [tasks, query]);
+
+  const grouped = useMemo(() => COLUMNS.reduce((acc, column) => {
+    acc[column.key] = filteredTasks.filter((task) => task.status === column.key);
+    return acc;
+  }, {}), [filteredTasks]);
+
+  const handleDeleteTask = async (taskId) => {
     if (!window.confirm("Delete this task?")) return;
     try {
       await api.delete(`/tasks/${taskId}`);
-      this.setState((prev) => ({ tasks: prev.tasks.filter((x) => x.id !== taskId) }));
+      setTasks((current) => current.filter((task) => task.id !== taskId));
     } catch (err) {
       alert(err.response?.data?.message || "Failed to delete task.");
     }
-  }
+  };
 
-  async handleRemoveMember(memberId) {
+  const handleDrop = async (status) => {
+    if (!dragging) return;
+    const previous = tasks;
+    setTasks((current) => current.map((task) => task.id === dragging ? { ...task, status } : task));
+    setDragging(null);
+    try {
+      await api.patch(`/tasks/${dragging}`, { status });
+    } catch (err) {
+      setTasks(previous);
+      alert(err.response?.data?.message || "Failed to move task.");
+    }
+  };
+
+  const handleRemoveMember = async (memberId) => {
     if (!window.confirm("Remove this member?")) return;
     try {
-      await api.delete(`/projects/${this.props.id}/members/${memberId}`);
-      this.load();
+      await api.delete(`/projects/${id}/members/${memberId}`);
+      load();
     } catch (err) {
       alert(err.response?.data?.message || "Failed to remove member.");
     }
+  };
+
+  if (loading) {
+    return <div className="detail-loading"><span className="spinner" /></div>;
   }
 
-  render() {
-    const { user, id } = this.props;
-    const { project, tasks, members, loading, modalTask, tab } = this.state;
+  if (error) return <div className="alert-error">{error}</div>;
 
-    const isAdmin = members.find(
-      (m) => m.user_id?.toString() === user?.id?.toString() ||
-             m.user_id?.toString() === user?._id?.toString()
-    )?.role === "admin";
-
-    const grouped = COLUMNS.reduce((acc, col) => {
-      acc[col.key] = tasks.filter((t) => t.status === col.key);
-      return acc;
-    }, {});
-
-    if (loading) return (
-      <div className="detail-loading">
-        <span className="spinner" style={{ width: 28, height: 28, borderWidth: 2 }} />
-      </div>
-    );
-
-    return (
-      <div className="project-detail page-enter">
-        {/* ── Header ── */}
-        <div className="detail-header">
-          <div className="detail-header__left">
-            <div
-              className="detail-color-dot"
-              style={{ background: project?.color, color: project?.color }}
-            />
-            <div className="detail-header__text">
-              <button className="detail-back" onClick={() => this.props.navigate("/projects")}>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                  <path d="M8 2L4 6l4 4"/>
-                </svg>
-                Projects
-              </button>
-              <h1 className="detail-title">{project?.name}</h1>
-              {project?.description && <p className="detail-desc">{project.description}</p>}
+  return (
+    <div className="project-detail page-enter">
+      <section className="detail-hero">
+        <div className="detail-hero__main">
+          <button className="detail-back" onClick={() => navigate("/projects")}>Back to projects</button>
+          <div className="detail-title-row">
+            <span className="detail-color" style={{ background: project?.color || "#67d8ff" }} />
+            <div>
+              <span className="eyebrow">Project workspace</span>
+              <h2>{project?.name}</h2>
+              {project?.description && <p>{project.description}</p>}
             </div>
           </div>
-          <div className="detail-header__actions">
-            {isAdmin && (
-              <button className="btn-accent" onClick={() => this.setState({ modalTask: {} })}>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/>
-                </svg>
-                Add Task
-              </button>
-            )}
+        </div>
+        <div className="detail-actions">
+          <span className={`status-pill ${isAdmin ? "green" : "blue"}`}>{isAdmin ? "Admin" : "Member"}</span>
+          {isAdmin && <button className="btn-primary" onClick={() => setModalTask({})}>Add task</button>}
+        </div>
+      </section>
+
+      <div className="detail-tabs" role="tablist">
+        <button className={tab === "board" ? "active" : ""} onClick={() => setTab("board")}>Board</button>
+        <button className={tab === "members" ? "active" : ""} onClick={() => setTab("members")}>Team ({members.length})</button>
+      </div>
+
+      {tab === "board" && (
+        <>
+          <div className="board-toolbar">
+            <input className="input" type="search" placeholder="Search by title, owner, priority, or status" value={query} onChange={(event) => setQuery(event.target.value)} />
+            <span className="chip">{filteredTasks.length} tasks</span>
           </div>
-        </div>
 
-        {/* ── Tabs ── */}
-        <div className="detail-tabs">
-          <button
-            className={`detail-tab ${tab === "board" ? "detail-tab--active" : ""}`}
-            onClick={() => this.setState({ tab: "board" })}
-          >Board</button>
-          <button
-            className={`detail-tab ${tab === "members" ? "detail-tab--active" : ""}`}
-            onClick={() => this.setState({ tab: "members" })}
-          >Team ({members.length})</button>
-        </div>
-
-        {/* ── Board ── */}
-        {tab === "board" && (
-          <div className="kanban-board">
-            {COLUMNS.map((col) => (
-              <div key={col.key} className="kanban-col">
+          <section className="kanban-board" aria-label="Project Kanban board">
+            {COLUMNS.map((column) => (
+              <div
+                className="kanban-col"
+                key={column.key}
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={() => handleDrop(column.key)}
+              >
                 <div className="kanban-col__header">
-                  <div className="kanban-col__title-row">
-                    <span className={`kanban-col__dot ${col.dot}`} />
-                    <span className="kanban-col__label">{col.label}</span>
-                    <span className="kanban-col__count">{grouped[col.key].length}</span>
+                  <div>
+                    <h3>{column.label}</h3>
+                    <span className={`status-pill ${column.tone}`}>{grouped[column.key]?.length || 0}</span>
                   </div>
-                  {isAdmin && (
-                    <button className="kanban-col__add"
-                      onClick={() => this.setState({ modalTask: { status: col.key } })}
-                      title={`Add to ${col.label}`}
-                    >+</button>
-                  )}
+                  {isAdmin && <button onClick={() => setModalTask({ status: column.key })} aria-label={`Add ${column.label} task`}>+</button>}
                 </div>
                 <div className="kanban-col__cards">
-                  {grouped[col.key].length === 0 && (
-                    <div className="kanban-col__empty">
-                      <span>No tasks</span>
-                    </div>
-                  )}
-                  {grouped[col.key].map((t) => (
-                    <TaskCard key={t.id} task={t} isAdmin={isAdmin}
-                      onEdit={(task) => this.setState({ modalTask: task })}
-                      onDelete={this.handleDeleteTask} />
-                  ))}
+                  {grouped[column.key]?.length ? grouped[column.key].map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      isAdmin={isAdmin}
+                      onEdit={setModalTask}
+                      onDelete={handleDeleteTask}
+                      onDragStart={setDragging}
+                    />
+                  )) : <div className="kanban-empty">No tasks here</div>}
                 </div>
               </div>
             ))}
-          </div>
-        )}
+          </section>
+        </>
+      )}
 
-        {/* ── Members ── */}
-        {tab === "members" && (
-          <div className="detail-members">
-            <div className="members-list">
-              {members.map((m) => (
-                <div key={m.user_id} className="member-row">
-                  <div className="avatar" style={{ background: m.avatar_color }}>
-                    {m.name[0].toUpperCase()}
-                  </div>
-                  <div className="member-row__info">
-                    <span className="member-row__name">{m.name}</span>
-                    <span className="member-row__email">{m.email}</span>
-                  </div>
-                  <span className={`member-row__badge member-row__badge--${m.role}`}>{m.role}</span>
-                  {isAdmin && m.user_id?.toString() !== user?.id?.toString() && (
-                    <button className="member-row__remove" onClick={() => this.handleRemoveMember(m.user_id)}>
-                      ✕
-                    </button>
-                  )}
+      {tab === "members" && (
+        <section className="members-grid">
+          <div className="members-list">
+            {members.map((member) => (
+              <article className="member-row" key={member.user_id}>
+                <span className="avatar" style={{ background: member.avatar_color }}>{member.name[0]}</span>
+                <div>
+                  <strong>{member.name}</strong>
+                  <span>{member.email}</span>
                 </div>
-              ))}
-            </div>
-            {isAdmin && <AddMemberForm projectId={id} onAdded={this.load} />}
+                <span className={`status-pill ${member.role === "admin" ? "green" : "blue"}`}>{member.role}</span>
+                {isAdmin && member.user_id?.toString() !== user?.id?.toString() && (
+                  <button className="btn-ghost" onClick={() => handleRemoveMember(member.user_id)}>Remove</button>
+                )}
+              </article>
+            ))}
           </div>
-        )}
+          {isAdmin && <AddMemberForm projectId={id} onAdded={load} />}
+        </section>
+      )}
 
-        {/* ── Modal ── */}
-        {modalTask !== null && (
-          <TaskModal
-            task={modalTask} projectId={id} members={members}
-            isAdmin={isAdmin} currentUser={user}
-            onClose={() => this.setState({ modalTask: null })}
-            onSaved={() => { this.setState({ modalTask: null }); this.load(); }}
-          />
-        )}
-      </div>
-    );
-  }
+      {modalTask !== null && (
+        <TaskModal
+          task={modalTask}
+          projectId={id}
+          members={members}
+          isAdmin={isAdmin}
+          currentUser={user}
+          onClose={() => setModalTask(null)}
+          onSaved={() => { setModalTask(null); load(); }}
+        />
+      )}
+    </div>
+  );
 }
-
-export default ProjectDetail;

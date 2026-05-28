@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const auth   = require("../middleware/auth");
-const { Task, Project, User } = require("../initDB");
+const { Task, Project, User, Comment } = require("../initDB");
 
 // ─── GET /api/dashboard ───────────────────────────────────────
 router.get("/", auth, async (req, res) => {
@@ -17,9 +17,15 @@ router.get("/", auth, async (req, res) => {
     const totalTasks = allTasks.length;
     const done       = allTasks.filter((t) => t.status === "done").length;
     const inProgress = allTasks.filter((t) => t.status === "inprogress").length;
+    const review     = allTasks.filter((t) => t.status === "review").length;
     const todo       = allTasks.filter((t) => t.status === "todo").length;
     const overdue    = allTasks.filter(
       (t) => t.due_date && t.status !== "done" && new Date(t.due_date) < now
+    ).length;
+    const weekOut = new Date(now);
+    weekOut.setDate(weekOut.getDate() + 7);
+    const dueSoon = allTasks.filter(
+      (t) => t.due_date && t.status !== "done" && new Date(t.due_date) >= now && new Date(t.due_date) <= weekOut
     ).length;
 
     // Tasks per user (assigned_to)
@@ -56,14 +62,35 @@ router.get("/", auth, async (req, res) => {
       project_name: t.project?.name || "Unknown",
     }));
 
+    const recentComments = await Comment.find({ project: { $in: projectIds } })
+      .sort({ createdAt: -1 })
+      .limit(4)
+      .populate("author", "name avatar_color")
+      .populate("task", "title status")
+      .lean();
+
+    const recentActivity = recentComments.map((comment) => ({
+      id: comment._id,
+      type: "comment",
+      body: comment.body,
+      created_at: comment.createdAt,
+      author_name: comment.author?.name || "Team member",
+      author_color: comment.author?.avatar_color || "#38bdf8",
+      task_title: comment.task?.title || "Task",
+      task_status: comment.task?.status || "todo",
+    }));
+
     res.json({
       totalTasks,
       done,
       inProgress,
+      review,
       todo,
       overdue,
+      dueSoon,
       perUser,
       overdueTasks,
+      recentActivity,
     });
   } catch (err) {
     console.error("Dashboard error:", err);

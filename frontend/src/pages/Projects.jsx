@@ -1,162 +1,144 @@
-import React, { Component } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
 import "./Projects.css";
 
-const PROJECT_COLORS = ["#e8613c","#2d7d4f","#2563eb","#d97706","#7c3aed","#0891b2","#be185d"];
+const PROJECT_COLORS = ["#67d8ff", "#4ade80", "#fbbf24", "#fb7185", "#a78bfa", "#38bdf8"];
 
 function ProjectCard({ project }) {
-  const progress = project.total_tasks > 0
-    ? Math.round((project.done_tasks / project.total_tasks) * 100) : 0;
+  const progress = project.total_tasks > 0 ? Math.round((project.done_tasks / project.total_tasks) * 100) : 0;
 
   return (
     <Link to={`/projects/${project.id}`} className="project-card">
-      <div className="project-card__color-bar" style={{ background: project.color }} />
-      <div className="project-card__body">
-        <div>
-          <span className="project-card__role">{project.role === "admin" ? "★ Admin" : "Member"}</span>
-          <h3 className="project-card__name">{project.name}</h3>
-          {project.description && <p className="project-card__desc">{project.description}</p>}
+      <span className="project-card__bar" style={{ background: project.color }} />
+      <div className="project-card__head">
+        <span className={`status-pill ${project.role === "admin" ? "green" : "blue"}`}>{project.role}</span>
+        <span className="chip">{project.member_count} members</span>
+      </div>
+      <div>
+        <h3>{project.name}</h3>
+        <p>{project.description || "No description yet."}</p>
+      </div>
+      <div className="project-card__bottom">
+        <div className="project-progress">
+          <i style={{ width: `${progress}%`, background: project.color }} />
         </div>
-        <div>
-          <div className="project-card__progress">
-            <div className="progress-track">
-              <div className="progress-fill" style={{ width: `${progress}%`, background: project.color }} />
-            </div>
-            <span className="progress-pct">{progress}%</span>
-          </div>
-          <div className="project-card__meta" style={{ marginTop: "0.5rem" }}>
-            <span>{project.total_tasks} tasks</span>
-            <span>{project.member_count} member{project.member_count !== 1 ? "s" : ""}</span>
-          </div>
+        <div className="project-card__meta">
+          <span>{progress}% complete</span>
+          <span>{project.total_tasks} tasks</span>
         </div>
       </div>
     </Link>
   );
 }
 
-class Projects extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      projects: [], loading: true, showForm: false,
-      form: { name: "", description: "", color: PROJECT_COLORS[0] },
-      creating: false, error: "",
-    };
-    this.load             = this.load.bind(this);
-    this.handleCreate     = this.handleCreate.bind(this);
-    this.handleFormChange = this.handleFormChange.bind(this);
-  }
+export default function Projects() {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState({ name: "", description: "", color: PROJECT_COLORS[0] });
 
-  componentDidMount() { this.load(); }
-
-  load() {
-    this.setState({ loading: true });
-    api.get("/projects")
-      .then((r) => this.setState({ projects: r.data }))
-      .catch(() => this.setState({ error: "Failed to load projects." }))
-      .finally(() => this.setState({ loading: false }));
-  }
-
-  handleFormChange(key, value) {
-    this.setState((prev) => ({ form: { ...prev.form, [key]: value } }));
-  }
-
-  async handleCreate(e) {
-    e.preventDefault();
-    if (!this.state.form.name.trim()) return;
-    this.setState({ creating: true, error: "" });
+  const load = async () => {
+    setLoading(true);
     try {
-      await api.post("/projects", this.state.form);
-      this.setState({ showForm: false, form: { name: "", description: "", color: PROJECT_COLORS[0] } });
-      this.load();
-    } catch (err) {
-      this.setState({ error: err.response?.data?.message || "Failed to create project." });
+      const { data } = await api.get("/projects");
+      setProjects(data);
+    } catch {
+      setError("Failed to load projects.");
     } finally {
-      this.setState({ creating: false });
+      setLoading(false);
     }
-  }
+  };
 
-  render() {
-    const { projects, loading, showForm, form, creating, error } = this.state;
+  useEffect(() => {
+    let alive = true;
+    api.get("/projects")
+      .then(({ data }) => alive && setProjects(data))
+      .catch(() => alive && setError("Failed to load projects."))
+      .finally(() => alive && setLoading(false));
+    return () => { alive = false; };
+  }, []);
 
-    return (
-      <div className="projects page-enter">
-        <div className="projects-header">
-          <div>
-            <h1>Projects</h1>
-            <p className="projects-sub">// all your workspaces in one place</p>
-          </div>
-          <button className="btn-accent" onClick={() => this.setState({ showForm: !showForm })}>
-            {showForm ? (
-              <>
-                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M1 1l9 9M10 1L1 10"/></svg>
-                Cancel
-              </>
-            ) : (
-              <>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>
-                New Project
-              </>
-            )}
-          </button>
+  const handleCreate = async (event) => {
+    event.preventDefault();
+    if (!form.name.trim()) return;
+    setCreating(true);
+    setError("");
+    try {
+      await api.post("/projects", form);
+      setForm({ name: "", description: "", color: PROJECT_COLORS[0] });
+      setShowForm(false);
+      load();
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to create project.");
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  return (
+    <div className="projects page-enter">
+      <section className="projects-hero">
+        <div>
+          <span className="eyebrow">Workspaces</span>
+          <h2>Projects with roles, progress, and team context.</h2>
+          <p>Each project is a protected collaboration space with members, task workflow, and delivery state.</p>
         </div>
+        <button className="btn-primary" onClick={() => setShowForm((value) => !value)}>
+          {showForm ? "Cancel" : "New project"}
+        </button>
+      </section>
 
-        {showForm && (
-          <div className="new-project-form">
-            <h3>Create a project</h3>
-            {error && <div className="alert-error" style={{ marginBottom: "1rem" }}>{error}</div>}
-            <form onSubmit={this.handleCreate}>
-              <div className="field">
-                <label>Project name</label>
-                <input type="text" placeholder="e.g. Website Redesign" value={form.name}
-                  onChange={(e) => this.handleFormChange("name", e.target.value)} required />
-              </div>
-              <div className="field">
-                <label>Description (optional)</label>
-                <textarea rows={2} placeholder="What's this project about?"
-                  value={form.description}
-                  onChange={(e) => this.handleFormChange("description", e.target.value)} />
-              </div>
-              <div className="field">
-                <label>Colour tag</label>
-                <div className="color-picker">
-                  {PROJECT_COLORS.map((c) => (
-                    <button key={c} type="button"
-                      className={`color-dot ${form.color === c ? "selected" : ""}`}
-                      style={{ background: c }}
-                      onClick={() => this.handleFormChange("color", c)} />
-                  ))}
-                </div>
-              </div>
-              <button type="submit" className="btn-accent" disabled={creating}
-                style={{ width: "100%", justifyContent: "center" }}>
-                {creating ? <span className="spinner" /> : "Create Project"}
-              </button>
-            </form>
+      {showForm && (
+        <form className="new-project-form" onSubmit={handleCreate}>
+          <div className="field">
+            <label>Project name</label>
+            <input value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} placeholder="Website redesign" required />
           </div>
-        )}
-
-        {loading ? (
-          <div className="projects-loading"><span className="spinner" /></div>
-        ) : projects.length === 0 ? (
-          <div className="projects-empty">
-            <div className="projects-empty-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
-              </svg>
+          <div className="field">
+            <label>Description</label>
+            <textarea value={form.description} onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))} placeholder="What is this project about?" />
+          </div>
+          <div>
+            <p className="field-label">Color tag</p>
+            <div className="color-picker">
+              {PROJECT_COLORS.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  className={`color-dot ${form.color === color ? "selected" : ""}`}
+                  style={{ background: color }}
+                  onClick={() => setForm((current) => ({ ...current, color }))}
+                  aria-label={`Choose project color ${color}`}
+                />
+              ))}
             </div>
-            <p>No projects yet.</p>
-            <span>Create your first project to get started.</span>
           </div>
-        ) : (
-          <div className="projects-grid">
-            {projects.map((p) => <ProjectCard key={p.id} project={p} />)}
-          </div>
-        )}
-      </div>
-    );
-  }
-}
+          <button className="btn-primary" type="submit" disabled={creating}>{creating ? <span className="spinner" /> : "Create project"}</button>
+        </form>
+      )}
 
-export default Projects;
+      {error && <div className="alert-error">{error}</div>}
+
+      {loading ? (
+        <div className="projects-grid">
+          <div className="skeleton project-skeleton" />
+          <div className="skeleton project-skeleton" />
+          <div className="skeleton project-skeleton" />
+        </div>
+      ) : projects.length ? (
+        <div className="projects-grid">
+          {projects.map((project) => <ProjectCard key={project.id} project={project} />)}
+        </div>
+      ) : (
+        <div className="projects-empty">
+          <span className="status-pill blue">Empty</span>
+          <h3>No projects yet</h3>
+          <p>Create a project to start a protected workspace with tasks and members.</p>
+        </div>
+      )}
+    </div>
+  );
+}

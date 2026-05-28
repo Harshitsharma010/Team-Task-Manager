@@ -1,8 +1,8 @@
-# Team Task Manager
+# Nexus Command Center
 
-**Full-stack team productivity platform for project tracking, task assignment, role-based collaboration, and workflow visibility.**
+**Recruiter-ready full-stack team execution platform for project tracking, task assignment, role-based collaboration, comments, workflow visibility, and dashboard analytics.**
 
-Team Task Manager is a MERN-style full-stack application for organizing team projects, assigning tasks, tracking progress, and viewing dashboard-level productivity metrics. It includes a React/Vite frontend, Node.js/Express REST API, MongoDB/Mongoose data models, JWT authentication, project membership, admin/member permissions, and Railway deployment configuration.
+Nexus Command Center is a MERN-style full-stack application for organizing team projects, assigning tasks, tracking progress, discussing work, and viewing dashboard-level productivity metrics. It includes a React/Vite frontend, Node.js/Express REST API, MongoDB/Mongoose data models, JWT authentication, one-click demo workspace seeding, project membership, admin/member permissions, comments, drag-and-drop workflow updates, and Railway deployment configuration.
 
 > **Project status**  
 > This is a portfolio full-stack project with working frontend and backend code. It is designed to demonstrate full-stack engineering, API design, authentication, role-based project workflows, and deployment readiness. It is not presented as a production SaaS product.
@@ -16,7 +16,9 @@ Team productivity apps are common in real companies because teams need visibilit
 - Project creation and membership
 - Admin/member authorization rules
 - Task assignment, priority, status, and due dates
-- Dashboard analytics for task progress and overdue work
+- Dashboard analytics for task progress, review work, due-soon work, overdue work, and team activity
+- Task comments/activity history
+- Recruiter-friendly demo workspace with seeded users, projects, tasks, and comments
 - Frontend routing and API integration
 - MongoDB data modeling with relationships between users, projects, and tasks
 
@@ -27,12 +29,14 @@ For full-stack, React, backend, and junior software roles, this project is stron
 | Feature | Description |
 | --- | --- |
 | Authentication | Signup and login using JWT and hashed passwords |
+| Demo workspace | One-click demo login creates a seeded recruiter workspace with realistic data |
 | Project management | Create projects, view project details, delete projects as admin |
 | Team collaboration | Add and remove project members by email |
 | Role-based access | Project admins can manage members/tasks; members can update assigned task status |
-| Task management | Create, assign, update, and delete tasks with status, priority, and due date |
-| My Tasks view | Shows tasks assigned to the logged-in user |
-| Dashboard metrics | Tracks total tasks, status counts, overdue tasks, and tasks per user |
+| Task management | Create, assign, update, drag, and delete tasks with status, priority, and due date |
+| Task comments | Project members can add task comments and preserve discussion context |
+| My Tasks view | Shows assigned tasks with search, status filters, priority filters, and status updates |
+| Dashboard metrics | Tracks completion, review, due-soon, overdue, workload, and recent activity |
 | Responsive frontend | React/Vite UI with dashboard, projects, project detail, auth, and task views |
 | Deployment config | Railway/Nixpacks configuration for full-stack deployment |
 
@@ -112,9 +116,9 @@ Dashboard summarizes progress and overdue work
 | Auth | User registration, login, password hashing, JWT creation |
 | Auth middleware | Validates bearer tokens and attaches the authenticated user to requests |
 | Projects | Project CRUD, membership, admin/member permission checks |
-| Tasks | Task assignment, status updates, admin/member update rules |
-| Dashboard | Aggregates task counts, status totals, overdue tasks, and user workload |
-| Frontend pages | Login, signup, dashboard, projects, project detail, and personal task views |
+| Tasks | Task assignment, comments, status updates, admin/member update rules |
+| Dashboard | Aggregates task counts, status totals, overdue tasks, due-soon work, activity, and user workload |
+| Frontend pages | Landing, demo login, auth, dashboard, projects, project board, task modal, and personal task views |
 
 ## API Endpoints
 
@@ -130,6 +134,7 @@ http://localhost:5000/api
 | --- | --- | --- | --- |
 | `POST` | `/auth/signup` | No | Register a new user |
 | `POST` | `/auth/login` | No | Log in and receive JWT |
+| `POST` | `/auth/demo` | No | Seed and enter the demo workspace |
 
 ### Projects
 
@@ -150,6 +155,8 @@ http://localhost:5000/api
 | Method | Endpoint | Auth | Description |
 | --- | --- | --- | --- |
 | `GET` | `/tasks/mine` | Yes | Get tasks assigned to the logged-in user |
+| `GET` | `/tasks/:id/comments` | Yes | Get task comments for project members |
+| `POST` | `/tasks/:id/comments` | Yes | Add a task comment as a project member |
 | `PATCH` | `/tasks/:id` | Yes | Admin can update task fields; assigned member can update status |
 | `DELETE` | `/tasks/:id` | Admin | Delete a task |
 
@@ -198,11 +205,21 @@ http://localhost:5000/api
 | `project` | ObjectId -> Project | Required |
 | `title` | String | Required |
 | `description` | String | Optional |
-| `status` | `todo`, `inprogress`, `done` | Defaults to `todo` |
+| `status` | `todo`, `inprogress`, `review`, `done` | Defaults to `todo` |
 | `priority` | `low`, `medium`, `high` | Defaults to `medium` |
 | `due_date` | Date | Optional |
 | `assigned_to` | ObjectId -> User | Optional |
 | `created_by` | ObjectId -> User | Required |
+| `createdAt`, `updatedAt` | Date | Mongoose timestamps |
+
+### Comment
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `task` | ObjectId -> Task | Required |
+| `project` | ObjectId -> Project | Required |
+| `author` | ObjectId -> User | Required |
+| `body` | String | Required, max 1200 chars |
 | `createdAt`, `updatedAt` | Date | Mongoose timestamps |
 
 ## Local Development Setup
@@ -406,7 +423,7 @@ This project is scoped as a portfolio full-stack application. The current implem
 - No automated test suite is included yet.
 - No CI/CD workflow is configured yet.
 - Role support currently uses `admin` and `member`; deeper workspace roles can be added later.
-- The app does not yet include email invitations or real-time notifications.
+- The app does not yet include email invitations, real-time notifications, or automated test coverage.
 - API documentation is README-based; generated OpenAPI docs are not included yet.
 - Production hardening would require rate limiting, stronger validation, logging, monitoring, and secrets management.
 
@@ -417,13 +434,13 @@ This project is scoped as a portfolio full-stack application. The current implem
 | Authentication | Add password reset, email verification, and refresh token flow |
 | Authorization | Expand role-based access control for owners, admins, members, and viewers |
 | Notifications | Add due-date reminders and assignment notifications |
-| Analytics | Add charts for completion rate, workload, overdue tasks, and project velocity |
+| Analytics | Add charts for velocity, cycle time, and project health trends |
 | Testing | Add backend API tests and frontend component tests |
 | CI/CD | Add GitHub Actions for linting, build checks, and deployment validation |
 | Docker | Add Dockerfile and Docker Compose for local full-stack setup |
 | API Docs | Add OpenAPI/Swagger documentation |
 | Cloud | Add deployment guide for Railway, Render, or AWS |
-| UX | Add drag-and-drop task boards, filters, search, and improved empty states |
+| UX | Add saved views, keyboard shortcuts, and richer notification states |
 
 ## License
 

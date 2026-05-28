@@ -40,15 +40,23 @@ const taskSchema = new mongoose.Schema({
   project: { type: mongoose.Schema.Types.ObjectId, ref: "Project", required: true },
   title: { type: String, required: true, trim: true },
   description: { type: String, trim: true },
-  status: { type: String, enum: ["todo", "inprogress", "done"], default: "todo" },
+  status: { type: String, enum: ["todo", "inprogress", "review", "done"], default: "todo" },
   priority: { type: String, enum: ["low", "medium", "high"], default: "medium" },
   due_date: { type: Date, default: null },
   assigned_to: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   created_by: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 }, { timestamps: true });
 
+const commentSchema = new mongoose.Schema({
+  task: { type: mongoose.Schema.Types.ObjectId, ref: "Task", required: true },
+  project: { type: mongoose.Schema.Types.ObjectId, ref: "Project", required: true },
+  author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  body: { type: String, required: true, trim: true, maxlength: 1200 },
+}, { timestamps: true });
+
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 const Project = mongoose.models.Project || mongoose.model("Project", projectSchema);
 const Task = mongoose.models.Task || mongoose.model("Task", taskSchema);
+const Comment = mongoose.models.Comment || mongoose.model("Comment", commentSchema);
 
-module.exports = { connectDB, User, Project, Task };
+module.exports = { connectDB, User, Project, Task, Comment };

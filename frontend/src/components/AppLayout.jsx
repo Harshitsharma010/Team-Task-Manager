@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Navigate, Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Navigate, Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./AppLayout.css";
 
@@ -12,7 +12,6 @@ const NAV = [
 export default function AppLayout() {
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -21,8 +20,6 @@ export default function AppLayout() {
     window.addEventListener("scroll", handler);
     return () => window.removeEventListener("scroll", handler);
   }, []);
-
-  useEffect(() => { setMenuOpen(false); }, [location.pathname]);
 
   if (loading) return (
     <div className="app-boot">

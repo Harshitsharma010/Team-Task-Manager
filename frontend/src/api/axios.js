@@ -1,4 +1,5 @@
 import axios from "axios";
+import { mockRequest, shouldUseMockFallback } from "./mockApi";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "/api",
@@ -12,7 +13,11 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (res) => res,
-  (err) => {
+  async (err) => {
+    if (shouldUseMockFallback(err)) {
+      return mockRequest(err.config);
+    }
+
     if (err.response?.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");

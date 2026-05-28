@@ -1,12 +1,17 @@
 const router = require("express").Router();
 const auth   = require("../middleware/auth");
-const { Task, Project } = require("../initDB");
+const { Task, Project, Comment } = require("../initDB");
 
 // ─── Helper ───────────────────────────────────────────────────
 const isProjectAdmin = (project, userId) =>
   project.members.some(
     (m) => m.user.toString() === userId.toString() && m.role === "admin"
   );
+
+const isProjectMember = (project, userId) =>
+  project.members.some((m) => m.user.toString() === userId.toString());
+
+const VALID_STATUS = ["todo", "inprogress", "review", "done"];
 
 // ─── GET /api/tasks/mine ──────────────────────────────────────
 // Get all tasks assigned to the logged-in user
@@ -36,6 +41,75 @@ router.get("/mine", auth, async (req, res) => {
   }
 });
 
+// GET /api/tasks/:id/comments
+// Project members can read discussion history for a task
+router.get("/:id/comments", auth, async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id).lean();
+    if (!task) return res.status(404).json({ message: "Task not found" });
+
+    const project = await Project.findById(task.project).lean();
+    if (!project) return res.status(404).json({ message: "Project not found" });
+    if (!isProjectMember(project, req.user._id))
+      return res.status(403).json({ message: "Access denied" });
+
+    const comments = await Comment.find({ task: task._id })
+      .sort({ createdAt: -1 })
+      .populate("author", "name avatar_color")
+      .lean();
+
+    res.json(comments.map((comment) => ({
+      id: comment._id.toString(),
+      body: comment.body,
+      created_at: comment.createdAt,
+      author_id: comment.author?._id?.toString(),
+      author_name: comment.author?.name || "Team member",
+      author_color: comment.author?.avatar_color || "#38bdf8",
+    })));
+  } catch (err) {
+    console.error("Get comments error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// POST /api/tasks/:id/comments
+// Project members can add comments to keep task context with the work
+router.post("/:id/comments", auth, async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: "Task not found" });
+
+    const project = await Project.findById(task.project);
+    if (!project) return res.status(404).json({ message: "Project not found" });
+    if (!isProjectMember(project, req.user._id))
+      return res.status(403).json({ message: "Access denied" });
+
+    const body = req.body.body?.trim();
+    if (!body) return res.status(400).json({ message: "Comment cannot be empty" });
+
+    const comment = await Comment.create({
+      task: task._id,
+      project: project._id,
+      author: req.user._id,
+      body,
+    });
+
+    const populated = await comment.populate("author", "name avatar_color");
+
+    res.status(201).json({
+      id: populated._id.toString(),
+      body: populated.body,
+      created_at: populated.createdAt,
+      author_id: populated.author?._id?.toString(),
+      author_name: populated.author?.name || "Team member",
+      author_color: populated.author?.avatar_color || "#38bdf8",
+    });
+  } catch (err) {
+    console.error("Create comment error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 // ─── PATCH /api/tasks/:id ─────────────────────────────────────
 // Admin: update anything | Member: update only status of their own task
 router.patch("/:id", auth, async (req, res) => {
@@ -58,13 +132,21 @@ router.patch("/:id", auth, async (req, res) => {
       const { title, description, status, priority, due_date, assigned_to } = req.body;
       if (title)       task.title       = title;
       if (description !== undefined) task.description = description;
-      if (status)      task.status      = status;
+      if (status) {
+        if (!VALID_STATUS.includes(status))
+          return res.status(400).json({ message: "Invalid task status" });
+        task.status = status;
+      }
       if (priority)    task.priority    = priority;
       if (due_date     !== undefined) task.due_date    = due_date || null;
       if (assigned_to  !== undefined) task.assigned_to = assigned_to || null;
     } else {
       // Member can only update status
-      if (req.body.status) task.status = req.body.status;
+      if (req.body.status) {
+        if (!VALID_STATUS.includes(req.body.status))
+          return res.status(400).json({ message: "Invalid task status" });
+        task.status = req.body.status;
+      }
     }
 
     await task.save();
@@ -100,6 +182,7 @@ router.delete("/:id", auth, async (req, res) => {
     if (!isProjectAdmin(project, req.user._id))
       return res.status(403).json({ message: "Only admins can delete tasks" });
 
+    await Comment.deleteMany({ task: task._id });
     await task.deleteOne();
     res.json({ message: "Task deleted" });
   } catch (err) {

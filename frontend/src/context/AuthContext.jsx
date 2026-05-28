@@ -1,44 +1,40 @@
-import { createContext, useContext, useState, useEffect } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
-  const [user, setUser]       = useState(null);
-  const [token, setToken]     = useState(null);
-  const [loading, setLoading] = useState(true);
+function readStoredAuth() {
+  const storedToken = localStorage.getItem("token");
+  const storedUser = localStorage.getItem("user");
+  if (!storedToken || !storedUser) return { user: null, token: null };
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUser  = localStorage.getItem("user");
-    if (storedToken && storedUser) {
-      try {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-      } catch {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-      }
-    }
-    setLoading(false);
-  }, []);
+  try {
+    return { user: JSON.parse(storedUser), token: storedToken };
+  } catch {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    return { user: null, token: null };
+  }
+}
+
+export function AuthProvider({ children }) {
+  const [auth, setAuth] = useState(readStoredAuth);
 
   const login = (userData, jwt) => {
-  const user = { ...userData, id: userData.id?.toString() || userData._id?.toString() };
-  setUser(user);
-  setToken(jwt);
-  localStorage.setItem("user",  JSON.stringify(user));
-  localStorage.setItem("token", jwt);
-};
+    const user = { ...userData, id: userData.id?.toString() || userData._id?.toString() };
+    setAuth({ user, token: jwt });
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", jwt);
+  };
 
   const logout = () => {
-    setUser(null);
-    setToken(null);
+    setAuth({ user: null, token: null });
     localStorage.removeItem("user");
     localStorage.removeItem("token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user: auth.user, token: auth.token, login, logout, loading: false }}>
       {children}
     </AuthContext.Provider>
   );
