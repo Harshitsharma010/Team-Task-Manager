@@ -35,7 +35,7 @@
 
 | Resource       | Link                                                                                        |
 | -------------- | ------------------------------------------------------------------------------------------- |
-| Live App       | [Open Nexus Command Center](https://team-task-manager-production-815a.up.railway.app/login) |
+| Live App       | [Open Nexus Command Center](https://team-task-manager-production-815a.up.railway.app/) |
 | Demo Workspace | Click **Try demo workspace** on the landing page                                            |
 | Deployment     | Railway                                                                                     |
 | Health Check   | [API Health Check](https://team-task-manager-production-815a.up.railway.app/api/health)     |
