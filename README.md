@@ -1,56 +1,92 @@
 # Nexus Command Center
 
-**Recruiter-ready full-stack team execution platform for project tracking, task assignment, role-based collaboration, comments, workflow visibility, and dashboard analytics.**
+<p align="center">
+  <strong>Full-Stack Team Task Management Platform</strong>
+</p>
 
-Nexus Command Center is a MERN-style full-stack application for organizing team projects, assigning tasks, tracking progress, discussing work, and viewing dashboard-level productivity metrics. It includes a React/Vite frontend, Node.js/Express REST API, MongoDB/Mongoose data models, JWT authentication, one-click demo workspace seeding, project membership, admin/member permissions, comments, drag-and-drop workflow updates, and Railway deployment configuration.
+<p align="center">
+  A collaboration-focused task management application built with React, Node.js, Express, MongoDB, and JWT authentication.
+</p>
 
-> **Project status**  
-> This is a portfolio full-stack project with working frontend and backend code. It is designed to demonstrate full-stack engineering, API design, authentication, role-based project workflows, and deployment readiness. It is not presented as a production SaaS product.
+<p align="center">
+  <img src="https://img.shields.io/badge/Frontend-React%20%2B%20Vite-blue" />
+  <img src="https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-green" />
+  <img src="https://img.shields.io/badge/Database-MongoDB-brightgreen" />
+  <img src="https://img.shields.io/badge/Auth-JWT-orange" />
+  <img src="https://img.shields.io/badge/Deployment-Railway-purple" />
+</p>
 
-## Why This Project Matters
+---
 
-Team productivity apps are common in real companies because teams need visibility into ownership, deadlines, project progress, and overdue work. This project demonstrates the engineering patterns behind that type of SaaS workflow:
+## Project Overview
 
-- User registration and login
-- Authenticated API access with JWT
-- Project creation and membership
-- Admin/member authorization rules
-- Task assignment, priority, status, and due dates
-- Dashboard analytics for task progress, review work, due-soon work, overdue work, and team activity
-- Task comments/activity history
-- Recruiter-friendly demo workspace with seeded users, projects, tasks, and comments
-- Frontend routing and API integration
-- MongoDB data modeling with relationships between users, projects, and tasks
+**Nexus Command Center** is a full-stack team execution and task management platform designed for project-based collaboration.
 
-For full-stack, React, backend, and junior software roles, this project is stronger than a basic todo app because it includes teams, projects, members, permissions, dashboard stats, and deployment configuration.
+It allows users to create projects, manage team members, assign tasks, track task progress, add comments, and view dashboard analytics for team workload and project status.
+
+This project is built as a portfolio-ready full-stack application to demonstrate:
+
+| Area | What This Project Demonstrates |
+|---|---|
+| Full-Stack Development | React frontend connected with Express REST APIs |
+| Authentication | JWT-based signup, login, and protected routes |
+| Backend Engineering | Modular Express routes, middleware, and API structure |
+| Database Design | MongoDB/Mongoose models with user-project-task relationships |
+| Authorization | Admin/member role-based permissions |
+| Collaboration Features | Project members, task assignment, comments, and status updates |
+| Dashboard Logic | Aggregated metrics for tasks, workload, overdue items, and progress |
+| Deployment Readiness | Railway/Nixpacks configuration for production deployment |
+
+---
+
+## Live Demo
+
+| Resource | Link |
+|---|---|
+| Live App | Coming Soon |
+| Demo Workspace | Available through one-click demo login |
+| Backend Health Check | `/api/health` |
+
+> Add your Railway deployment link here after deployment.
+
+---
 
 ## Key Features
 
 | Feature | Description |
-| --- | --- |
-| Authentication | Signup and login using JWT and hashed passwords |
-| Demo workspace | One-click demo login creates a seeded recruiter workspace with realistic data |
-| Project management | Create projects, view project details, delete projects as admin |
-| Team collaboration | Add and remove project members by email |
-| Role-based access | Project admins can manage members/tasks; members can update assigned task status |
-| Task management | Create, assign, update, drag, and delete tasks with status, priority, and due date |
-| Task comments | Project members can add task comments and preserve discussion context |
-| My Tasks view | Shows assigned tasks with search, status filters, priority filters, and status updates |
-| Dashboard metrics | Tracks completion, review, due-soon, overdue, workload, and recent activity |
-| Responsive frontend | React/Vite UI with dashboard, projects, project detail, auth, and task views |
-| Deployment config | Railway/Nixpacks configuration for full-stack deployment |
+|---|---|
+| User Authentication | Secure signup and login using JWT and hashed passwords |
+| Demo Workspace | One-click demo workspace with seeded sample data |
+| Project Management | Create projects, view project details, and organize team work |
+| Team Members | Add and remove project members using email |
+| Role-Based Access | Project admins manage tasks and members; members update assigned task status |
+| Task Assignment | Assign tasks to project members with status, priority, and due date |
+| Task Workflow | Track tasks through `todo`, `inprogress`, `review`, and `done` stages |
+| Task Comments | Add comments to tasks for discussion and collaboration history |
+| My Tasks View | View all tasks assigned to the logged-in user |
+| Dashboard Analytics | Track completed, pending, review, overdue, and due-soon tasks |
+| Workload Summary | View member-wise workload distribution |
+| Production Config | Railway/Nixpacks setup for full-stack deployment |
+
+---
 
 ## Tech Stack
 
 | Layer | Technology |
-| --- | --- |
-| Frontend | React, Vite, React Router, Axios, CSS |
-| Backend | Node.js, Express |
-| Database | MongoDB, Mongoose |
+|---|---|
+| Frontend | React, Vite, React Router |
+| Styling | CSS |
+| API Client | Axios |
+| Backend | Node.js, Express.js |
+| Database | MongoDB |
+| ODM | Mongoose |
 | Authentication | JWT, bcrypt/bcryptjs |
-| API | REST API, JSON responses, auth middleware |
-| Deployment | Railway, Nixpacks |
+| API Style | REST API |
+| Deployment | Railway |
+| Build System | Nixpacks |
 | Runtime | Node.js 20+ |
+
+---
 
 ## System Architecture
 
@@ -60,13 +96,14 @@ User
   v
 React + Vite Frontend
   |
-  | Axios requests with JWT bearer token
+  | Axios API requests with JWT bearer token
   v
 Express REST API
   |
-  | Auth middleware verifies JWT
+  | Auth middleware validates token
   v
 Route Modules
+  |
   |-- /api/auth
   |-- /api/projects
   |-- /api/tasks
@@ -74,6 +111,7 @@ Route Modules
   |
   v
 Mongoose Models
+  |
   |-- User
   |-- Project
   |-- Task
@@ -82,171 +120,201 @@ Mongoose Models
 MongoDB Database
 ```
 
+---
+
 ## User Workflow
 
-```text
-Sign up / log in
-  |
-  v
-Create a project
-  |
-  v
-Project creator becomes admin
-  |
-  v
-Admin adds team members by email
-  |
-  v
-Admin creates and assigns tasks
-  |
-  v
-Members view assigned tasks
-  |
-  v
-Members update task status
-  |
-  v
-Dashboard summarizes progress and overdue work
-```
+| Step | Action |
+|---|---|
+| 1 | User signs up or logs in |
+| 2 | User creates a project |
+| 3 | Project creator becomes project admin |
+| 4 | Admin adds members by email |
+| 5 | Admin creates and assigns tasks |
+| 6 | Members view assigned tasks |
+| 7 | Members update task status |
+| 8 | Team discusses tasks through comments |
+| 9 | Dashboard displays project and workload summary |
+
+---
 
 ## Core Modules
 
 | Module | Responsibility |
-| --- | --- |
-| Auth | User registration, login, password hashing, JWT creation |
-| Auth middleware | Validates bearer tokens and attaches the authenticated user to requests |
-| Projects | Project CRUD, membership, admin/member permission checks |
-| Tasks | Task assignment, comments, status updates, admin/member update rules |
-| Dashboard | Aggregates task counts, status totals, overdue tasks, due-soon work, activity, and user workload |
-| Frontend pages | Landing, demo login, auth, dashboard, projects, project board, task modal, and personal task views |
+|---|---|
+| Authentication | Handles signup, login, password hashing, and JWT generation |
+| Auth Middleware | Protects private routes and attaches authenticated user data |
+| Projects | Handles project creation, member management, and project permissions |
+| Tasks | Handles task creation, assignment, status updates, comments, and deletion |
+| Dashboard | Aggregates task status, overdue work, due-soon work, and workload data |
+| Frontend Pages | Provides landing, auth, dashboard, projects, project board, and task views |
+
+---
 
 ## API Endpoints
 
-Base path:
+Base API URL:
 
-```text
+```bash
 http://localhost:5000/api
 ```
 
-### Auth
+---
 
-| Method | Endpoint | Auth | Description |
-| --- | --- | --- | --- |
-| `POST` | `/auth/signup` | No | Register a new user |
-| `POST` | `/auth/login` | No | Log in and receive JWT |
-| `POST` | `/auth/demo` | No | Seed and enter the demo workspace |
+### Authentication Routes
 
-### Projects
+| Method | Endpoint | Auth Required | Description |
+|---|---|---|---|
+| POST | `/auth/signup` | No | Register a new user |
+| POST | `/auth/login` | No | Log in user and return JWT |
+| POST | `/auth/demo` | No | Create or enter demo workspace |
 
-| Method | Endpoint | Auth | Description |
-| --- | --- | --- | --- |
-| `GET` | `/projects` | Yes | List projects for the logged-in user |
-| `POST` | `/projects` | Yes | Create a project and become admin |
-| `GET` | `/projects/:id` | Yes | Get project details if user is a member |
-| `DELETE` | `/projects/:id` | Admin | Delete a project and its tasks |
-| `GET` | `/projects/:id/members` | Yes | List project members |
-| `POST` | `/projects/:id/members` | Admin | Add a member by email |
-| `DELETE` | `/projects/:id/members/:userId` | Admin | Remove a project member |
-| `GET` | `/projects/:id/tasks` | Yes | List project tasks |
-| `POST` | `/projects/:id/tasks` | Admin | Create a project task |
+---
 
-### Tasks
+### Project Routes
 
-| Method | Endpoint | Auth | Description |
-| --- | --- | --- | --- |
-| `GET` | `/tasks/mine` | Yes | Get tasks assigned to the logged-in user |
-| `GET` | `/tasks/:id/comments` | Yes | Get task comments for project members |
-| `POST` | `/tasks/:id/comments` | Yes | Add a task comment as a project member |
-| `PATCH` | `/tasks/:id` | Yes | Admin can update task fields; assigned member can update status |
-| `DELETE` | `/tasks/:id` | Admin | Delete a task |
+| Method | Endpoint | Auth Required | Permission | Description |
+|---|---|---|---|---|
+| GET | `/projects` | Yes | User | Get projects where user is a member |
+| POST | `/projects` | Yes | User | Create a new project |
+| GET | `/projects/:id` | Yes | Project Member | Get project details |
+| DELETE | `/projects/:id` | Yes | Admin | Delete project and its tasks |
+| GET | `/projects/:id/members` | Yes | Project Member | Get project members |
+| POST | `/projects/:id/members` | Yes | Admin | Add member by email |
+| DELETE | `/projects/:id/members/:userId` | Yes | Admin | Remove project member |
+| GET | `/projects/:id/tasks` | Yes | Project Member | Get project tasks |
+| POST | `/projects/:id/tasks` | Yes | Admin | Create task inside project |
 
-### Dashboard
+---
 
-| Method | Endpoint | Auth | Description |
-| --- | --- | --- | --- |
-| `GET` | `/dashboard` | Yes | Get task totals, status counts, overdue tasks, and task distribution |
-| `GET` | `/health` | No | Backend health check |
+### Task Routes
 
-## Database Schema / Data Model
+| Method | Endpoint | Auth Required | Permission | Description |
+|---|---|---|---|---|
+| GET | `/tasks/mine` | Yes | User | Get tasks assigned to logged-in user |
+| GET | `/tasks/:id/comments` | Yes | Project Member | Get comments for a task |
+| POST | `/tasks/:id/comments` | Yes | Project Member | Add comment to task |
+| PATCH | `/tasks/:id` | Yes | Admin / Assigned Member | Update task details or status |
+| DELETE | `/tasks/:id` | Yes | Admin | Delete task |
 
-### User
+---
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `name` | String | Required |
-| `email` | String | Required, unique, lowercase |
-| `password` | String | Hashed password |
-| `avatar_color` | String | UI avatar color |
-| `createdAt`, `updatedAt` | Date | Mongoose timestamps |
+### Dashboard Routes
 
-### Project
+| Method | Endpoint | Auth Required | Description |
+|---|---|---|---|
+| GET | `/dashboard` | Yes | Get task totals, overdue tasks, due-soon tasks, status counts, and workload |
+| GET | `/health` | No | Check backend health |
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `name` | String | Required |
-| `description` | String | Optional |
-| `color` | String | UI project color |
-| `created_by` | ObjectId -> User | Project owner |
-| `members` | Array | User references with `admin` or `member` role |
-| `createdAt`, `updatedAt` | Date | Mongoose timestamps |
+---
 
-### Project Member
+## Database Design
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `user` | ObjectId -> User | Required |
-| `role` | `admin` or `member` | Defaults to `member` |
-| `joinedAt` | Date | Defaults to current date |
+### User Model
 
-### Task
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | String | Yes | User's full name |
+| `email` | String | Yes | Unique lowercase email |
+| `password` | String | Yes | Hashed user password |
+| `avatar_color` | String | No | UI avatar color |
+| `createdAt` | Date | Auto | Creation timestamp |
+| `updatedAt` | Date | Auto | Update timestamp |
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `project` | ObjectId -> Project | Required |
-| `title` | String | Required |
-| `description` | String | Optional |
-| `status` | `todo`, `inprogress`, `review`, `done` | Defaults to `todo` |
-| `priority` | `low`, `medium`, `high` | Defaults to `medium` |
-| `due_date` | Date | Optional |
-| `assigned_to` | ObjectId -> User | Optional |
-| `created_by` | ObjectId -> User | Required |
-| `createdAt`, `updatedAt` | Date | Mongoose timestamps |
+---
 
-### Comment
+### Project Model
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `task` | ObjectId -> Task | Required |
-| `project` | ObjectId -> Project | Required |
-| `author` | ObjectId -> User | Required |
-| `body` | String | Required, max 1200 chars |
-| `createdAt`, `updatedAt` | Date | Mongoose timestamps |
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | String | Yes | Project name |
+| `description` | String | No | Project description |
+| `color` | String | No | UI project color |
+| `created_by` | ObjectId → User | Yes | User who created the project |
+| `members` | Array | Yes | Project members with role information |
+| `createdAt` | Date | Auto | Creation timestamp |
+| `updatedAt` | Date | Auto | Update timestamp |
+
+---
+
+### Project Member Schema
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `user` | ObjectId → User | Yes | Project member reference |
+| `role` | `admin` / `member` | Yes | Member permission level |
+| `joinedAt` | Date | Auto | Date member joined project |
+
+---
+
+### Task Model
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `project` | ObjectId → Project | Yes | Project linked to the task |
+| `title` | String | Yes | Task title |
+| `description` | String | No | Task details |
+| `status` | `todo` / `inprogress` / `review` / `done` | Yes | Current task status |
+| `priority` | `low` / `medium` / `high` | Yes | Task priority |
+| `due_date` | Date | No | Task due date |
+| `assigned_to` | ObjectId → User | No | Assigned project member |
+| `created_by` | ObjectId → User | Yes | User who created the task |
+| `comments` | Array | No | Task discussion comments |
+| `createdAt` | Date | Auto | Creation timestamp |
+| `updatedAt` | Date | Auto | Update timestamp |
+
+---
+
+### Task Comment Schema
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `user` | ObjectId → User | Yes | Comment author |
+| `message` | String | Yes | Comment text |
+| `createdAt` | Date | Auto | Comment timestamp |
+
+---
 
 ## Local Development Setup
 
 ### Prerequisites
 
-- Node.js 20+
-- MongoDB Atlas or local MongoDB connection string
-- npm
+| Requirement | Version |
+|---|---|
+| Node.js | 20+ |
+| npm | Latest stable |
+| MongoDB | MongoDB Atlas or local MongoDB |
 
-### 1. Clone the repository
+---
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Harshitsharma010/Team-Task-Manager.git
 cd Team-Task-Manager
 ```
 
-### 2. Install dependencies
+---
+
+### 2. Install Dependencies
+
+Install backend dependencies:
 
 ```bash
 npm install --prefix server
+```
+
+Install frontend dependencies:
+
+```bash
 npm install --prefix frontend
 ```
 
-### 3. Configure backend environment
+---
 
-Create `server/.env`:
+### 3. Configure Environment Variables
+
+Create a `.env` file inside the `server` folder:
 
 ```env
 PORT=5000
@@ -255,66 +323,77 @@ JWT_SECRET=replace_with_a_long_random_secret
 CLIENT_URL=http://localhost:5173
 ```
 
-### 4. Run the backend
-
-```bash
-npm run dev --prefix server
-```
-
-Backend:
-
-```text
-http://localhost:5000
-```
-
-Health check:
-
-```text
-http://localhost:5000/api/health
-```
-
-### 5. Run the frontend
-
-Open a second terminal:
-
-```bash
-npm run dev --prefix frontend
-```
-
-Frontend:
-
-```text
-http://localhost:5173
-```
-
-## Environment Variables
-
-### Backend
-
-| Variable | Required | Description |
-| --- | --- | --- |
-| `PORT` | No | API port. Defaults to `5000` |
-| `MONGO_URI` | Yes | MongoDB connection string |
-| `JWT_SECRET` | Yes | Secret used to sign JWT tokens |
-| `CLIENT_URL` | No | Frontend URL for CORS. Defaults to `http://localhost:5173` |
-| `NODE_ENV` | No | Set to `production` for serving the built frontend from Express |
-
-### Frontend
-
-| Variable | Required | Description |
-| --- | --- | --- |
-| `VITE_API_URL` | Optional | API base URL. Defaults to `/api` |
-
-Example `frontend/.env` for local development:
+Optional frontend `.env` file:
 
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
+---
+
+### 4. Run Backend Server
+
+```bash
+npm run dev --prefix server
+```
+
+Backend runs at:
+
+```bash
+http://localhost:5000
+```
+
+Health check:
+
+```bash
+http://localhost:5000/api/health
+```
+
+---
+
+### 5. Run Frontend App
+
+Open another terminal and run:
+
+```bash
+npm run dev --prefix frontend
+```
+
+Frontend runs at:
+
+```bash
+http://localhost:5173
+```
+
+---
+
+## Environment Variables
+
+### Backend Variables
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `PORT` | No | `5000` | Backend server port |
+| `MONGO_URI` | Yes | None | MongoDB connection string |
+| `JWT_SECRET` | Yes | None | Secret key used to sign JWT tokens |
+| `CLIENT_URL` | No | `http://localhost:5173` | Frontend URL for CORS |
+| `NODE_ENV` | No | `development` | App environment |
+
+---
+
+### Frontend Variables
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `VITE_API_URL` | No | `/api` | API base URL used by frontend |
+
+---
+
 ## Project Structure
 
 ```text
 Team-Task-Manager/
+|
 |-- frontend/
 |   |-- src/
 |   |   |-- api/
@@ -322,125 +401,185 @@ Team-Task-Manager/
 |   |   |-- context/
 |   |   |-- pages/
 |   |   `-- main.jsx
+|   |
 |   |-- package.json
 |   `-- vite.config.js
+|
 |-- server/
 |   |-- middleware/
 |   |   `-- auth.js
+|   |
 |   |-- routes/
 |   |   |-- auth.js
 |   |   |-- dashboard.js
 |   |   |-- projects.js
 |   |   `-- tasks.js
+|   |
 |   |-- index.js
 |   |-- initDB.js
 |   `-- package.json
+|
 |-- nixpacks.toml
 |-- package.json
 `-- README.md
 ```
 
-## Screenshots / Demo Proof
+---
 
-Add proof here after capturing the working app.
+## Screenshots
 
-| Proof | Status |
-| --- | --- |
-| Login/signup screen | `[Add Screenshot]` |
-| Dashboard screen | `[Add Screenshot]` |
-| Projects list | `[Add Screenshot]` |
-| Project detail with tasks | `[Add Screenshot]` |
-| Task modal / create task flow | `[Add Screenshot]` |
-| API response from Postman or browser | `[Add API Docs]` |
-| Short walkthrough video | `[Add Demo Video]` |
-| Live deployment | `[Add Live Demo]` |
+Add screenshots after running or deploying the application.
 
-Suggested file paths:
+| Screen | Preview |
+|---|---|
+| Login Page | Add screenshot |
+| Dashboard | Add screenshot |
+| Projects Page | Add screenshot |
+| Project Board | Add screenshot |
+| Task Modal | Add screenshot |
+
+Recommended screenshot paths:
 
 ```text
 docs/screenshots/login.png
 docs/screenshots/dashboard.png
 docs/screenshots/projects.png
-docs/screenshots/project-detail.png
+docs/screenshots/project-board.png
 docs/screenshots/task-modal.png
 ```
 
-## Deployment Plan
+After adding screenshots, replace the table above with:
 
-This repository includes `nixpacks.toml` for Railway-style deployment.
+| Screen | Screenshot |
+|---|---|
+| Login Page | ![Login Page](docs/screenshots/login.png) |
+| Dashboard | ![Dashboard](docs/screenshots/dashboard.png) |
+| Projects Page | ![Projects Page](docs/screenshots/projects.png) |
+| Project Board | ![Project Board](docs/screenshots/project-board.png) |
+| Task Modal | ![Task Modal](docs/screenshots/task-modal.png) |
 
-### Railway deployment flow
+---
 
-1. Push the repository to GitHub.
-2. Create a Railway project from the GitHub repo.
-3. Add backend environment variables:
+## Deployment
 
-```env
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secure_secret
-NODE_ENV=production
-```
+This project includes `nixpacks.toml` for Railway-style full-stack deployment.
 
-4. Railway uses `nixpacks.toml` to:
-   - Install backend dependencies.
-   - Install frontend dependencies.
-   - Build the React frontend.
-   - Start the Express server in production mode.
+### Railway Deployment Flow
 
-In production mode, Express serves the built frontend from `frontend/dist`.
+| Step | Action |
+|---|---|
+| 1 | Push the project to GitHub |
+| 2 | Create a new Railway project |
+| 3 | Connect the GitHub repository |
+| 4 | Add required environment variables |
+| 5 | Railway installs dependencies, builds frontend, and starts Express server |
+| 6 | Express serves the built React app in production |
 
-### Railway environment checklist
+---
 
-If Railway shows one deployment succeeding and another deployment failing for the same commit, check whether you have multiple Railway services connected to the same GitHub repository. Each service needs its own environment variables.
+### Required Railway Environment Variables
 
-Required variables for the full-stack service:
+| Variable | Required | Description |
+|---|---|---|
+| `MONGO_URI` | Yes | MongoDB Atlas connection string |
+| `JWT_SECRET` | Yes | Secure JWT signing secret |
+| `NODE_ENV` | Yes | Set to `production` |
 
-```env
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secure_secret
-NODE_ENV=production
-```
+Optional:
 
-Optional variable:
+| Variable | Required | Description |
+|---|---|---|
+| `CLIENT_URL` | No | Railway or custom frontend URL |
 
-```env
-CLIENT_URL=https://your-frontend-or-railway-domain
-```
+---
 
-Common failure causes:
+### Common Deployment Issues
 
-- `MONGO_URI` is missing or invalid.
-- `JWT_SECRET` is missing.
-- A duplicate Railway service is still connected to the repository but does not have the required variables.
-- The service is deploying the wrong root directory or using stale settings.
+| Issue | Possible Cause |
+|---|---|
+| App crashes on startup | Missing `MONGO_URI` or invalid database connection |
+| Login/signup not working | Missing or weak `JWT_SECRET` |
+| CORS error | Incorrect `CLIENT_URL` |
+| Frontend not loading | Frontend build path not found |
+| Railway deploys wrong service | Wrong root directory or duplicate service setup |
 
-If one Railway service is already working, keep that as the active deployment and disconnect or delete the duplicate failing service to avoid noisy failed deployment history.
+---
 
-## Limitations
+## Current Limitations
 
-This project is scoped as a portfolio full-stack application. The current implementation demonstrates the main workflow, but the following improvements would make it stronger:
+| Limitation | Status |
+|---|---|
+| Automated tests | Not added yet |
+| CI/CD workflow | Not added yet |
+| Swagger/OpenAPI docs | Not added yet |
+| Email invitations | Not added yet |
+| Real-time notifications | Not added yet |
+| Advanced roles | Currently supports `admin` and `member` |
+| Production monitoring | Not added yet |
+| Rate limiting | Not added yet |
 
-- No automated test suite is included yet.
-- No CI/CD workflow is configured yet.
-- Role support currently uses `admin` and `member`; deeper workspace roles can be added later.
-- The app does not yet include email invitations, real-time notifications, or automated test coverage.
-- API documentation is README-based; generated OpenAPI docs are not included yet.
-- Production hardening would require rate limiting, stronger validation, logging, monitoring, and secrets management.
+---
 
 ## Future Improvements
 
-| Area | Improvement |
-| --- | --- |
+| Area | Planned Improvement |
+|---|---|
 | Authentication | Add password reset, email verification, and refresh token flow |
-| Authorization | Expand role-based access control for owners, admins, members, and viewers |
-| Notifications | Add due-date reminders and assignment notifications |
-| Analytics | Add charts for velocity, cycle time, and project health trends |
+| Authorization | Add owner, admin, member, and viewer roles |
+| Notifications | Add task assignment and due-date reminders |
+| Real-Time Features | Add WebSocket-based live updates |
+| Analytics | Add charts for velocity, completion rate, and project health |
 | Testing | Add backend API tests and frontend component tests |
-| CI/CD | Add GitHub Actions for linting, build checks, and deployment validation |
-| Docker | Add Dockerfile and Docker Compose for local full-stack setup |
-| API Docs | Add OpenAPI/Swagger documentation |
-| Cloud | Add deployment guide for Railway, Render, or AWS |
-| UX | Add saved views, keyboard shortcuts, and richer notification states |
+| CI/CD | Add GitHub Actions build and test pipeline |
+| Docker | Add Dockerfile and Docker Compose setup |
+| API Docs | Add Swagger/OpenAPI documentation |
+| Cloud | Add AWS or Render deployment guide |
+| UX | Add saved filters, keyboard shortcuts, and better notification states |
+
+---
+
+## Resume Value
+
+This project demonstrates practical full-stack engineering skills.
+
+| Skill Area | Evidence in Project |
+|---|---|
+| React Development | Multi-page frontend with routing, API calls, and state handling |
+| Backend Development | Express REST API with modular route structure |
+| Authentication | JWT-based protected routes |
+| Authorization | Admin/member project-level permissions |
+| Database Design | User, Project, Task, Member, and Comment relationships |
+| API Design | REST endpoints for auth, projects, tasks, and dashboard |
+| Product Thinking | Real team workflow instead of a simple todo app |
+| Deployment Readiness | Railway/Nixpacks production configuration |
+
+Suggested resume line:
+
+> Built a full-stack team task management platform with JWT authentication, project membership, role-based task workflows, comments, dashboard analytics, and Railway deployment configuration using React, Node.js, Express, and MongoDB.
+
+---
+
+## Repository Topics
+
+Recommended GitHub topics:
+
+```text
+react
+vite
+nodejs
+express
+mongodb
+mongoose
+jwt-authentication
+rest-api
+task-manager
+project-management
+full-stack
+railway
+nixpacks
+```
+
+---
 
 ## License
 
