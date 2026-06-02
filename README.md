@@ -1,7 +1,7 @@
 # Nexus Command Center
 
 <p align="center">
-  <strong>Full-Stack Team Task Management Platform with JWT Auth, RBAC, Kanban Workflow, Analytics, and Railway Deployment</strong>
+  <strong>Full-Stack Team Task Management Platform with JWT Auth, RBAC, Kanban Workflow, Analytics, and Vercel Deployment</strong>
 </p>
 
 <p align="center">
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://team-task-manager-production-815a.up.railway.app/">Live Demo</a>
+  <a href="https://team-task-manager-ydda.vercel.app/">Live Demo</a>
   ·
   <a href="#screenshots">Screenshots</a>
   ·
@@ -26,7 +26,7 @@
   <img src="https://img.shields.io/badge/Database-MongoDB-brightgreen" />
   <img src="https://img.shields.io/badge/Auth-JWT-orange" />
   <img src="https://img.shields.io/badge/RBAC-Admin%20%2F%20Member-purple" />
-  <img src="https://img.shields.io/badge/Deploy-Railway-black" />
+  <img src="https://img.shields.io/badge/Deploy-Vercel-black" />
 </p>
 
 ---
@@ -35,10 +35,10 @@
 
 | Resource       | Link                                                                                        |
 | -------------- | ------------------------------------------------------------------------------------------- |
-| Live App       | [Open Nexus Command Center](https://team-task-manager-production-815a.up.railway.app/) |
+| Live App       | [Open Nexus Command Center](https://team-task-manager-ydda.vercel.app/) |
 | Demo Workspace | Click **Try demo workspace** on the landing page                                            |
-| Deployment     | Railway                                                                                     |
-| Health Check   | [API Health Check](https://team-task-manager-production-815a.up.railway.app/api/health)     |
+| Deployment     | Vercel                                                                                      |
+| Health Check   | [API Health Check](https://team-task-manager-ydda.vercel.app/api/health)                   |
 
 > The demo workspace is pre-seeded with sample team members, projects, assigned tasks, workflow states, and dashboard analytics for quick recruiter review.
 
@@ -78,7 +78,7 @@ Most beginner task apps only support personal todo creation. Nexus Command Cente
 | Database Design        | MongoDB/Mongoose models with user-project-task relationships        |
 | Collaboration          | Project members, task assignment, comments, and status updates      |
 | Dashboard Logic        | Aggregated metrics for tasks, workload, overdue items, and progress |
-| Deployment Readiness   | Railway/Nixpacks configuration for production deployment            |
+| Deployment Readiness   | Vercel configuration for full-stack production deployment           |
 
 ---
 
@@ -98,7 +98,7 @@ Most beginner task apps only support personal todo creation. Nexus Command Cente
 | Search and Filters        | Filter assigned tasks by status, priority, and search terms                  |
 | Dashboard Analytics       | Track completed, pending, review, overdue, and due-soon tasks                |
 | Workload Summary          | View member-wise workload distribution                                       |
-| Production Deployment     | Railway deployment with Nixpacks build configuration                         |
+| Production Deployment     | Vercel deployment with frontend rewrites and serverless API routing          |
 
 ---
 
@@ -114,8 +114,8 @@ Most beginner task apps only support personal todo creation. Nexus Command Cente
 | ODM            | Mongoose                  |
 | Authentication | JWT, bcrypt/bcryptjs      |
 | API Style      | REST API                  |
-| Deployment     | Railway                   |
-| Build System   | Nixpacks                  |
+| Deployment     | Vercel                    |
+| Build System   | Vite + Vercel             |
 | Runtime        | Node.js 20+               |
 
 ---
@@ -194,7 +194,7 @@ http://localhost:5000/api
 Production API URL:
 
 ```bash
-https://team-task-manager-production-815a.up.railway.app/api
+https://team-task-manager-ydda.vercel.app/api
 ```
 
 ---
@@ -473,34 +473,34 @@ Team-Task-Manager/
 
 ## Deployment
 
-This project includes `nixpacks.toml` for Railway-style full-stack deployment.
+This project is deployed on Vercel as a full-stack app. The frontend is built from `frontend/`, and API traffic is routed through the serverless Express entrypoint in `api/index.js`.
 
-### Railway Deployment Flow
+### Vercel Deployment Flow
 
-| Step | Action                                                                    |
-| ---- | ------------------------------------------------------------------------- |
-| 1    | Push the project to GitHub                                                |
-| 2    | Create a new Railway project                                              |
-| 3    | Connect the GitHub repository                                             |
-| 4    | Add required environment variables                                        |
-| 5    | Railway installs dependencies, builds frontend, and starts Express server |
-| 6    | Express serves the built React app in production                          |
+| Step | Action                                                                     |
+| ---- | -------------------------------------------------------------------------- |
+| 1    | Push the project to GitHub                                                 |
+| 2    | Create or connect a Vercel project from this repository                    |
+| 3    | Keep the root directory as the repository root                             |
+| 4    | Add required environment variables                                         |
+| 5    | Vercel runs the root build command and outputs `frontend/dist`             |
+| 6    | `/api/*` requests are routed to the Express serverless function            |
 
 ---
 
-### Required Railway Environment Variables
+### Required Vercel Environment Variables
 
 | Variable     | Required | Description                     |
 | ------------ | -------- | ------------------------------- |
 | `MONGO_URI`  | Yes      | MongoDB Atlas connection string |
 | `JWT_SECRET` | Yes      | Secure JWT signing secret       |
-| `NODE_ENV`   | Yes      | Set to `production`             |
+| `VITE_API_URL` | Yes   | Set to `/api`                   |
 
 Optional:
 
 | Variable     | Required | Description                    |
 | ------------ | -------- | ------------------------------ |
-| `CLIENT_URL` | No       | Railway or custom frontend URL |
+| `CLIENT_URL` | No       | Vercel or custom frontend URL  |
 
 ---
 
@@ -512,7 +512,7 @@ Optional:
 | Login/signup not working      | Missing or weak `JWT_SECRET`                       |
 | CORS error                    | Incorrect `CLIENT_URL`                             |
 | Frontend not loading          | Frontend build path not found                      |
-| Railway deploys wrong service | Wrong root directory or duplicate service setup    |
+| Vercel API returns 500        | Missing env vars or MongoDB Atlas network access   |
 
 ---
 
@@ -562,11 +562,11 @@ This project demonstrates practical full-stack engineering skills.
 | Database Design      | User, Project, Task, Member, and Comment relationships          |
 | API Design           | REST endpoints for auth, projects, tasks, and dashboard         |
 | Product Thinking     | Real team workflow instead of a simple todo app                 |
-| Deployment Readiness | Railway/Nixpacks production configuration                       |
+| Deployment Readiness | Vercel production configuration                                 |
 
 Suggested resume line:
 
-> Built a full-stack team task management platform with JWT authentication, RBAC, project membership, Kanban task workflows, comments, dashboard analytics, and Railway deployment using React, Node.js, Express, and MongoDB.
+> Built a full-stack team task management platform with JWT authentication, RBAC, project membership, Kanban task workflows, comments, dashboard analytics, and Vercel deployment using React, Node.js, Express, and MongoDB.
 
 ---
 
@@ -588,8 +588,8 @@ task-manager
 project-management
 kanban-board
 full-stack
-railway
-nixpacks
+vercel
+serverless
 ```
 
 ---
