@@ -48,22 +48,30 @@
 }
 
 .metric-tile {
-  min-height: 164px;
-  padding: 1rem;
+  min-height: 148px;
+  padding: 1.05rem;
   box-shadow: var(--shadow-panel);
 }
 
-.metric-tile strong {
+.metric-value {
   display: block;
-  margin: 1.35rem 0 0.4rem;
-  font-family: var(--font-mono);
-  font-size: 2.5rem;
-  line-height: 1;
+  margin: 1.25rem 0 0.35rem;
+  color: var(--fg);
+  font-family: var(--font-ui);
+  font-size: 2.35rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  font-variant-numeric: tabular-nums;
 }
 
 .metric-tile p,
 .empty-copy {
   color: var(--fg-3);
+}
+
+.metric-tile p {
+  font-size: 0.93rem;
 }
 
 .dash-grid {
@@ -97,6 +105,24 @@
   border-radius: var(--r-md);
   background: var(--panel-soft);
   padding: 1rem;
+}
+
+.segment-empty {
+  display: grid;
+  gap: 0.25rem;
+  min-height: 70px;
+  place-content: center;
+  text-align: center;
+}
+
+.segment-empty strong {
+  color: var(--fg);
+  font-size: 0.98rem;
+}
+
+.segment-empty span {
+  color: var(--fg-3);
+  font-size: 0.88rem;
 }
 
 .segment-track {
@@ -138,13 +164,14 @@
 }
 
 .health-ring {
+  position: relative;
   display: grid;
   place-items: center;
-  padding: 1.3rem 0 0.5rem;
+  padding: 1.6rem 0 0.4rem;
 }
 
 .health-ring svg {
-  width: min(270px, 70vw);
+  width: min(220px, 58vw);
 }
 
 .health-ring circle {
@@ -161,18 +188,31 @@
   transition: stroke-dashoffset 0.8s var(--ease);
 }
 
-.health-ring text {
-  fill: var(--fg);
-  font-family: var(--font-mono);
-  font-size: 1.45rem;
-  font-weight: 800;
+.health-ring-empty .health-ring-fill {
+  stroke: transparent;
 }
 
-.health-ring-caption {
-  fill: var(--fg-3);
-  font-size: 0.52rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.health-ring-label {
+  position: absolute;
+  display: grid;
+  gap: 0.18rem;
+  place-items: center;
+  text-align: center;
+}
+
+.health-ring-label strong {
+  color: var(--fg);
+  font-size: 2.15rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.health-ring-label span {
+  color: var(--fg-3);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .workload-list,

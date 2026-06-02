@@ -12,30 +12,40 @@ function MetricTile({ label, value, helper, tone = "blue" }) {
   return (
     <article className="metric-tile">
       <span className={`status-pill ${tone}`}>{label}</span>
-      <strong>{value ?? "--"}</strong>
+      <strong className="metric-value">{value ?? "--"}</strong>
       <p>{helper}</p>
     </article>
   );
 }
 
 function SegmentBar({ todo = 0, inProgress = 0, review = 0, done = 0 }) {
-  const total = todo + inProgress + review + done || 1;
+  const totalTasks = todo + inProgress + review + done;
+  const total = totalTasks || 1;
   const pct = (value) => `${(value / total) * 100}%`;
 
   return (
     <div className="segment-card">
-      <div className="segment-track" aria-label="Task status breakdown">
-        <span className="seg-todo" style={{ width: pct(todo) }} />
-        <span className="seg-progress" style={{ width: pct(inProgress) }} />
-        <span className="seg-review" style={{ width: pct(review) }} />
-        <span className="seg-done" style={{ width: pct(done) }} />
-      </div>
-      <div className="segment-legend">
-        <span><i className="seg-todo" />{todo} todo</span>
-        <span><i className="seg-progress" />{inProgress} active</span>
-        <span><i className="seg-review" />{review} review</span>
-        <span><i className="seg-done" />{done} done</span>
-      </div>
+      {totalTasks ? (
+        <>
+          <div className="segment-track" aria-label="Task status breakdown">
+            <span className="seg-todo" style={{ width: pct(todo) }} />
+            <span className="seg-progress" style={{ width: pct(inProgress) }} />
+            <span className="seg-review" style={{ width: pct(review) }} />
+            <span className="seg-done" style={{ width: pct(done) }} />
+          </div>
+          <div className="segment-legend">
+            <span><i className="seg-todo" />{todo} todo</span>
+            <span><i className="seg-progress" />{inProgress} active</span>
+            <span><i className="seg-review" />{review} review</span>
+            <span><i className="seg-done" />{done} done</span>
+          </div>
+        </>
+      ) : (
+        <div className="segment-empty">
+          <strong>No tasks yet</strong>
+          <span>Create a project task to start tracking delivery state.</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -85,6 +95,7 @@ export default function Dashboard() {
   if (error) return <div className="alert-error">{error}</div>;
 
   const firstName = user?.name?.split(" ")[0] || "there";
+  const totalTasks = stats.totalTasks || 0;
 
   return (
     <div className="dashboard page-enter">
@@ -101,10 +112,10 @@ export default function Dashboard() {
       </section>
 
       <section className="metrics-grid" aria-label="Workspace metrics">
-        <MetricTile label="Completion" value={`${health}%`} helper={`${stats.done} of ${stats.totalTasks} tasks done`} tone="green" />
-        <MetricTile label="Due soon" value={stats.dueSoon || 0} helper="Due in the next 7 days" tone="amber" />
-        <MetricTile label="Overdue" value={stats.overdue || 0} helper="Needs owner attention" tone={stats.overdue ? "rose" : "green"} />
-        <MetricTile label="Review" value={stats.review || 0} helper="Waiting for final pass" tone="blue" />
+        <MetricTile label="Completion" value={`${health}%`} helper={totalTasks ? `${stats.done} of ${totalTasks} tasks done` : "No tasks created yet"} tone="green" />
+        <MetricTile label="Due soon" value={stats.dueSoon || 0} helper={stats.dueSoon ? "Due in the next 7 days" : "No upcoming deadlines"} tone="amber" />
+        <MetricTile label="Overdue" value={stats.overdue || 0} helper={stats.overdue ? "Needs owner attention" : "Everything is on schedule"} tone={stats.overdue ? "rose" : "green"} />
+        <MetricTile label="Review" value={stats.review || 0} helper={stats.review ? "Waiting for final pass" : "No items in review"} tone="blue" />
       </section>
 
       <section className="dash-grid">
@@ -122,7 +133,7 @@ export default function Dashboard() {
             review={stats.review || 0}
             done={stats.done || 0}
           />
-          <div className="health-ring">
+          <div className={`health-ring${totalTasks ? "" : " health-ring-empty"}`}>
             <svg viewBox="0 0 120 120" role="img" aria-label={`${health}% completion rate`}>
               <circle cx="60" cy="60" r="48" />
               <circle
@@ -133,9 +144,11 @@ export default function Dashboard() {
                 strokeDasharray={2 * Math.PI * 48}
                 strokeDashoffset={2 * Math.PI * 48 * (1 - health / 100)}
               />
-              <text x="60" y="57" textAnchor="middle">{health}%</text>
-              <text x="60" y="74" textAnchor="middle" className="health-ring-caption">complete</text>
             </svg>
+            <div className="health-ring-label">
+              <strong>{health}%</strong>
+              <span>{totalTasks ? "complete" : "not started"}</span>
+            </div>
           </div>
         </article>
 
@@ -184,7 +197,7 @@ export default function Dashboard() {
                 </div>
                 <span className="status-pill rose">{formatDate(task.due_date)}</span>
               </div>
-            )) : <p className="empty-copy">No overdue work. That is the clean state we like.</p>}
+            )) : <p className="empty-copy">No overdue work right now.</p>}
           </div>
         </article>
 
