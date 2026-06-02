@@ -5,12 +5,26 @@ const connectDB = async () => {
     throw new Error("Missing required environment variable: MONGO_URI");
   }
 
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+
+  global.__nexusMongo = global.__nexusMongo || { conn: null, promise: null };
+
+  if (global.__nexusMongo.conn) {
+    return global.__nexusMongo.conn;
+  }
+
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
+    global.__nexusMongo.promise = global.__nexusMongo.promise || mongoose.connect(process.env.MONGO_URI, {
       serverSelectionTimeoutMS: 15000,
     });
+    await global.__nexusMongo.promise;
+    global.__nexusMongo.conn = mongoose.connection;
     console.log("MongoDB connected: taskManager db ready");
+    return global.__nexusMongo.conn;
   } catch (err) {
+    global.__nexusMongo.promise = null;
     throw new Error(`MongoDB connection failed: ${err.message}`);
   }
 };
