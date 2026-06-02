@@ -1,10 +1,14 @@
 const DB_KEY = "nexus_mock_db_v1";
+const MOSS = "#317a4f";
+const GOLD = "#a36a00";
+const LEAF = "#3e8a55";
+const PLUM = "#8253a6";
 
 const demoUsers = [
-  { id: "u_admin", name: "Aisha Sharma", email: "demo.admin@nexus.dev", password: "nexus-demo", avatar_color: "#67d8ff", demo: true },
-  { id: "u_dev", name: "Dev Kapoor", email: "demo.dev@nexus.dev", password: "nexus-demo", avatar_color: "#fbbf24", demo: true },
-  { id: "u_maya", name: "Maya Rao", email: "demo.maya@nexus.dev", password: "nexus-demo", avatar_color: "#4ade80", demo: true },
-  { id: "u_rohan", name: "Rohan Patel", email: "demo.rohan@nexus.dev", password: "nexus-demo", avatar_color: "#a78bfa", demo: true },
+  { id: "u_admin", name: "Aisha Sharma", email: "demo.admin@nexus.dev", password: "nexus-demo", avatar_color: MOSS, demo: true },
+  { id: "u_dev", name: "Dev Kapoor", email: "demo.dev@nexus.dev", password: "nexus-demo", avatar_color: GOLD, demo: true },
+  { id: "u_maya", name: "Maya Rao", email: "demo.maya@nexus.dev", password: "nexus-demo", avatar_color: LEAF, demo: true },
+  { id: "u_rohan", name: "Rohan Patel", email: "demo.rohan@nexus.dev", password: "nexus-demo", avatar_color: PLUM, demo: true },
 ];
 
 const daysFromNow = (days) => {
@@ -21,7 +25,7 @@ const createSeedDb = () => ({
       id: "p_demo",
       name: "Nexus Hiring Demo",
       description: "A recruiter-ready workspace showing RBAC, analytics, Kanban workflow, comments, and overdue tracking.",
-      color: "#67d8ff",
+      color: MOSS,
       created_by: "u_admin",
       members: [
         { user: "u_admin", role: "admin", joinedAt: daysFromNow(-12) },
@@ -256,7 +260,7 @@ const dashboard = (db, userId) => {
     dueSoon: tasks.filter((task) => task.due_date && task.status !== "done" && new Date(task.due_date) >= now && new Date(task.due_date) <= weekOut).length,
     perUser: Object.entries(assignedCounts).map(([memberId, task_count]) => {
       const user = userById(db, memberId);
-      return { id: memberId, name: user?.name || "Team member", avatar_color: user?.avatar_color || "#67d8ff", task_count };
+      return { id: memberId, name: user?.name || "Team member", avatar_color: user?.avatar_color || MOSS, task_count };
     }),
     overdueTasks: overdueTasks.map((task) => ({
       id: task.id,
@@ -279,7 +283,7 @@ const dashboard = (db, userId) => {
           body: comment.body,
           created_at: comment.created_at,
           author_name: author?.name || "Team member",
-          author_color: author?.avatar_color || "#67d8ff",
+          author_color: author?.avatar_color || MOSS,
           task_title: task?.title || "Task",
           task_status: task?.status || "todo",
         };
@@ -329,7 +333,7 @@ export async function mockRequest(config) {
       name: body.name,
       email: body.email.toLowerCase(),
       password: body.password,
-      avatar_color: body.avatar_color || "#67d8ff",
+      avatar_color: body.avatar_color || MOSS,
     };
     db.users.push(user);
     writeDb(db);
@@ -371,7 +375,7 @@ export async function mockRequest(config) {
       id: id("p"),
       name: body.name,
       description: body.description || "",
-      color: body.color || "#67d8ff",
+      color: body.color || MOSS,
       created_by: userId,
       members: [{ user: userId, role: "admin", joinedAt: new Date().toISOString() }],
     };
@@ -412,7 +416,7 @@ export async function mockRequest(config) {
         user_id: user?.id,
         name: user?.name || "Team member",
         email: user?.email || "",
-        avatar_color: user?.avatar_color || "#67d8ff",
+        avatar_color: user?.avatar_color || MOSS,
         role: member.role,
         joined_at: member.joinedAt,
       };
@@ -429,7 +433,7 @@ export async function mockRequest(config) {
         name: body.email?.split("@")[0] || "New teammate",
         email: body.email,
         password: "nexus-demo",
-        avatar_color: "#a78bfa",
+        avatar_color: PLUM,
       };
       db.users.push(invited);
     }
@@ -514,7 +518,7 @@ export async function mockRequest(config) {
           created_at: comment.created_at,
           author_id: author?.id,
           author_name: author?.name || "Team member",
-          author_color: author?.avatar_color || "#67d8ff",
+          author_color: author?.avatar_color || MOSS,
         };
       });
     return response(config, comments);
@@ -540,7 +544,7 @@ export async function mockRequest(config) {
       created_at: comment.created_at,
       author_id: author?.id,
       author_name: author?.name || "Team member",
-      author_color: author?.avatar_color || "#67d8ff",
+      author_color: author?.avatar_color || MOSS,
     }, 201);
   }
 

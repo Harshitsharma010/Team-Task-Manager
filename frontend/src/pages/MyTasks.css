@@ -11,7 +11,7 @@
 .tasks-empty {
   border: 1px solid var(--rim);
   border-radius: var(--r-md);
-  background: rgba(18, 25, 37, 0.82);
+  background: var(--panel);
 }
 
 .tasks-hero {
@@ -60,7 +60,7 @@
 }
 
 .filter-pills button.active {
-  background: var(--surface-2);
+  background: var(--green-bg);
   color: var(--fg);
 }
 
@@ -114,7 +114,7 @@
   min-height: 42px;
   border: 1px solid var(--rim);
   border-radius: var(--r-sm);
-  background: #0d131d;
+  background: var(--surface);
   color: var(--fg);
   padding: 0 0.75rem;
 }

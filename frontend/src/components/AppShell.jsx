@@ -114,7 +114,7 @@ export default function AppShell() {
         </div>
 
         <div className="shell-user">
-          <div className="avatar" style={{ background: user?.avatar_color || "#67d8ff" }} aria-label={user?.name}>
+          <div className="avatar" style={{ background: user?.avatar_color || "#317a4f" }} aria-label={user?.name}>
             {initials}
           </div>
           <div className="shell-user__info">
@@ -145,7 +145,7 @@ export default function AppShell() {
           <div className="shell-topbar__right">
             <span className="status-pill green">Live app</span>
             <div className="shell-topbar__user">
-              <div className="avatar-sm" style={{ background: user?.avatar_color || "#67d8ff" }}>{initials}</div>
+              <div className="avatar-sm" style={{ background: user?.avatar_color || "#317a4f" }}>{initials}</div>
               <span>{user?.name?.split(" ")[0]}</span>
             </div>
           </div>

@@ -9,7 +9,7 @@
 .metric-tile {
   border: 1px solid var(--rim);
   border-radius: var(--r-md);
-  background: rgba(18, 25, 37, 0.82);
+  background: var(--panel);
 }
 
 .dash-hero {
@@ -22,7 +22,7 @@
 
 .dash-hero h2 {
   margin: 0.45rem 0 0.6rem;
-  font-size: clamp(2rem, 4vw, 3.6rem);
+  font-size: clamp(2rem, 4vw, 3.2rem);
 }
 
 .dash-hero p {
@@ -50,6 +50,7 @@
 .metric-tile {
   min-height: 164px;
   padding: 1rem;
+  box-shadow: var(--shadow-panel);
 }
 
 .metric-tile strong {
@@ -94,7 +95,7 @@
 .segment-card {
   border: 1px solid var(--rim);
   border-radius: var(--r-md);
-  background: rgba(13, 19, 29, 0.66);
+  background: var(--panel-soft);
   padding: 1rem;
 }
 
@@ -187,7 +188,7 @@
 .activity-row {
   border: 1px solid var(--rim);
   border-radius: var(--r-sm);
-  background: rgba(13, 19, 29, 0.56);
+  background: var(--surface);
   padding: 0.75rem;
 }
 

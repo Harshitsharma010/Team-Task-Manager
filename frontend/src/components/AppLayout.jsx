@@ -63,7 +63,7 @@ export default function AppLayout() {
 
         <div className="cmdbar__right">
           <div className="cmdbar__user" onClick={() => setMenuOpen(!menuOpen)}>
-            <div className="avatar" style={{ background: user?.avatar_color || "#00d9e8" }}>
+            <div className="avatar" style={{ background: user?.avatar_color || "#317a4f" }}>
               {initials}
             </div>
             <span className="cmdbar__username">{user?.name?.split(" ")[0]}</span>
@@ -77,7 +77,7 @@ export default function AppLayout() {
               <div className="cmdbar__overlay" onClick={() => setMenuOpen(false)} />
               <div className="cmdbar__dropdown">
                 <div className="cmdbar__dropdown-user">
-                  <div className="avatar avatar--lg" style={{ background: user?.avatar_color || "#00d9e8" }}>
+                  <div className="avatar avatar--lg" style={{ background: user?.avatar_color || "#317a4f" }}>
                     {initials}
                   </div>
                   <div>
@@ -115,7 +115,7 @@ export default function AppLayout() {
           </nav>
           <div className="divider" />
           <div className="mobile-drawer__user">
-            <div className="avatar" style={{ background: user?.avatar_color || "#00d9e8" }}>{initials}</div>
+            <div className="avatar" style={{ background: user?.avatar_color || "#317a4f" }}>{initials}</div>
             <span>{user?.name}</span>
           </div>
           <button className="mobile-drawer__logout" onClick={handleLogout}>Sign out</button>

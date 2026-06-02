@@ -23,7 +23,7 @@ function ProductPreview() {
       <div className="preview-body">
         <aside className="preview-sidebar">
           <div className="preview-workspace">
-            <span className="avatar" style={{ background: "#67d8ff" }}>NX</span>
+            <span className="avatar" style={{ background: "#317a4f" }}>NX</span>
             <div>
               <strong>Nexus</strong>
               <span>Admin workspace</span>
@@ -48,9 +48,9 @@ function ProductPreview() {
                 <h3>Risk by owner</h3>
               </div>
               {[
-                ["Aisha", "82%", "#67d8ff"],
-                ["Dev", "64%", "#fbbf24"],
-                ["Maya", "47%", "#4ade80"],
+                ["Aisha", "82%", "#317a4f"],
+                ["Dev", "64%", "#a36a00"],
+                ["Maya", "47%", "#3e8a55"],
               ].map(([name, pct, color]) => (
                 <div className="preview-bar" key={name}>
                   <span>{name}</span>

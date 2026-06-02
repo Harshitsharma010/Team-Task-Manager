@@ -45,7 +45,7 @@ function TaskCard({ task, isAdmin, onEdit, onDelete, onDragStart }) {
       {task.description && <p>{task.description}</p>}
       <div className="board-task__meta">
         {task.assigned_name ? (
-          <span className="avatar" style={{ background: task.assigned_color || "#67d8ff" }} title={task.assigned_name}>
+          <span className="avatar" style={{ background: task.assigned_color || "#317a4f" }} title={task.assigned_name}>
             {task.assigned_name[0]}
           </span>
         ) : <span className="status-pill">Unassigned</span>}
@@ -215,7 +215,7 @@ export default function ProjectDetail() {
         <div className="detail-hero__main">
           <button className="detail-back" onClick={() => navigate("/projects")}>Back to projects</button>
           <div className="detail-title-row">
-            <span className="detail-color" style={{ background: project?.color || "#67d8ff" }} />
+            <span className="detail-color" style={{ background: project?.color || "#317a4f" }} />
             <div>
               <span className="eyebrow">Project workspace</span>
               <h2>{project?.name}</h2>

@@ -3,7 +3,14 @@ import { Link } from "react-router-dom";
 import api from "../api/axios";
 import "./Projects.css";
 
-const PROJECT_COLORS = ["#67d8ff", "#4ade80", "#fbbf24", "#fb7185", "#a78bfa", "#38bdf8"];
+const PROJECT_COLORS = [
+  "#317a4f",
+  "#a36a00",
+  "#b64958",
+  "#8253a6",
+  "#3f6f92",
+  "#7b604c",
+];
 
 function ProjectCard({ project }) {
   const progress = project.total_tasks > 0 ? Math.round((project.done_tasks / project.total_tasks) * 100) : 0;

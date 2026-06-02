@@ -4,7 +4,14 @@ import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import "./Auth.css";
 
-const AVATAR_COLORS = ["#67d8ff", "#4ade80", "#fbbf24", "#fb7185", "#a78bfa", "#38bdf8"];
+const AVATAR_COLORS = [
+  "#317a4f",
+  "#a36a00",
+  "#b64958",
+  "#8253a6",
+  "#3f6f92",
+  "#7b604c",
+];
 
 export default function Signup() {
   const { login } = useAuth();

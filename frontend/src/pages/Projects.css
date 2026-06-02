@@ -10,7 +10,7 @@
 .projects-empty {
   border: 1px solid var(--rim);
   border-radius: var(--r-md);
-  background: rgba(18, 25, 37, 0.82);
+  background: var(--panel);
 }
 
 .projects-hero {
@@ -62,7 +62,8 @@
 .project-card:hover {
   transform: translateY(-2px);
   border-color: var(--cyan-border);
-  background: rgba(23, 33, 49, 0.9);
+  background: var(--panel-strong);
+  box-shadow: var(--shadow-panel);
 }
 
 .project-card__bar {
