@@ -16,12 +16,30 @@ app.use(cors({
 }));
 app.use(express.json());
 
-app.get("/api/health", (req, res) => {
+app.get("/api/health", async (req, res) => {
   const missingEnv = getMissingEnv();
-  res.json({
-    status: missingEnv.length ? "missing-env" : "ok",
-    missingEnv,
-  });
+  if (missingEnv.length) {
+    return res.status(500).json({
+      status: "missing-env",
+      missingEnv,
+      message: `Missing required environment variables: ${missingEnv.join(", ")}`,
+    });
+  }
+
+  try {
+    await connectDB();
+    return res.json({
+      status: "ok",
+      missingEnv: [],
+      database: "connected",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: "database-error",
+      missingEnv: [],
+      message: err.message,
+    });
+  }
 });
 
 app.use("/api", async (req, res, next) => {
@@ -36,7 +54,9 @@ app.use("/api", async (req, res, next) => {
     await connectDB();
     next();
   } catch (err) {
-    next(err);
+    return res.status(500).json({
+      message: err.message,
+    });
   }
 });
 

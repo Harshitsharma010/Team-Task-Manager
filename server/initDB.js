@@ -17,7 +17,8 @@ const connectDB = async () => {
 
   try {
     global.__nexusMongo.promise = global.__nexusMongo.promise || mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 15000,
+      maxPoolSize: 5,
+      serverSelectionTimeoutMS: 5000,
     });
     await global.__nexusMongo.promise;
     global.__nexusMongo.conn = mongoose.connection;
