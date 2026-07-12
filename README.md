@@ -1,5 +1,7 @@
 # Nexus Command Center
 
+[![CI](https://github.com/Harshitsharma010/Team-Task-Manager/actions/workflows/ci.yml/badge.svg)](https://github.com/Harshitsharma010/Team-Task-Manager/actions/workflows/ci.yml)
+
 <p align="center">
   <strong>Full-Stack Team Task Management Platform with JWT Auth, RBAC, Kanban Workflow, Analytics, and Vercel Deployment</strong>
 </p>
