@@ -19,12 +19,14 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.2rem;
+  border: 0;
+  background: transparent;
+  padding: 0.35rem 0 0.45rem;
 }
 
 .tasks-hero h2 {
   margin: 0.35rem 0 0.55rem;
-  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-size: 2rem;
 }
 
 .tasks-hero p,
@@ -66,8 +68,9 @@
 
 .filter-pills span {
   color: var(--cyan);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .tasks-list {
@@ -90,11 +93,10 @@
 
 .task-row__project {
   color: var(--cyan);
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
 }
 
 .task-row h3 {

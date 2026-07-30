@@ -34,7 +34,7 @@
 
 .task-modal__head h2 {
   margin: 0.4rem 0 0.3rem;
-  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-size: 1.5rem;
 }
 
 .task-modal__head p {
@@ -122,9 +122,8 @@
 
 .comment-item small {
   color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 0.66rem;
-  text-transform: uppercase;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
 }
 
 .role-card h3 {
